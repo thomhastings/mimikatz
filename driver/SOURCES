@@ -1,0 +1,8 @@
+TARGETNAME=mimikatz
+TARGETPATH=OBJ
+TARGETTYPE=DRIVER
+SOURCES=mimikatz.c \
+		processes.c minifilters.c fsfilters.c modules.c ssdt.c \
+		notify.c
+
+TARGETLIBS= $(TARGETLIBS) $(IFSKIT_LIB_PATH)\fltmgr.lib $(BASEDIR)\lib\wlh\*\aux_klib.lib $(DDK_LIB_PATH)\ntstrsafe.lib
