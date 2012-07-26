@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mod_cryptoapi.h"
 
 bool mod_cryptoapi::getVectorProviders(vector<wstring> * monVectorProviders)

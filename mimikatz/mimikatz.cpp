@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mimikatz.h"
 
 bool mimikatz::initLocalModules()
@@ -44,8 +49,6 @@ mimikatz::~mimikatz(void)
 {
 	mod_mimikatz_inject::closeThisCommunicator();
 }
-
-
 
 bool mimikatz::tryToDispatch(wstring * maLigne)
 {
@@ -118,7 +121,6 @@ bool mimikatz::doCommandeLocale(wstring * fonction, vector<wstring> * arguments)
 	listModules();
 	return true;
 }
-
 
 bool mimikatz::openKernel()
 {
@@ -206,7 +208,6 @@ bool mimikatz::doCommandeKernel(std::wstring &commande)
 	return true;
 }
 
-
 bool mimikatz::doCommandeDistante(std::wstring &commande)
 {
 	bool commOk = false;
@@ -245,7 +246,6 @@ bool mimikatz::doCommandeDistante(std::wstring &commande)
 
 	return true;
 }
-
 
 void mimikatz::listModules()
 {

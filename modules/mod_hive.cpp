@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mod_hive.h"
 
 mod_hive::nk_hdr* mod_hive::read_nk(nk_hdr *nk, hive *h, int offset )

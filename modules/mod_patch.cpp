@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mod_patch.h"
 
 bool mod_patch::patchModuleOfService(wstring serviceName, wstring moduleName, BYTE * patternToSearch, SIZE_T szPatternToSearch, BYTE * patternToPlace, SIZE_T szPatternToPlace, long offsetForPlace)
@@ -18,7 +23,6 @@ bool mod_patch::patchModuleOfService(wstring serviceName, wstring moduleName, BY
 
 	return reussite;
 }
-
 
 bool mod_patch::patchModuleOfPID(DWORD pid, wstring moduleName, BYTE * patternToSearch, SIZE_T szPatternToSearch, BYTE * patternToPlace, SIZE_T szPatternToPlace, long offsetForPlace)
 {
@@ -49,7 +53,6 @@ bool mod_patch::patchModuleOfPID(DWORD pid, wstring moduleName, BYTE * patternTo
 	else wcout << L"mod_process::getUniqueModuleForName : " << mod_system::getWinError() << endl;
 	return reussite;
 }
-
 
 bool mod_patch::getFullVersion(DWORD * majorVersion, DWORD * minorVersion, DWORD * build, bool * isServer, bool * is64)
 {
@@ -84,12 +87,6 @@ bool mod_patch::checkVersion(KIWI_OS_CHECK * monOsValide)
 
 	if(getFullVersion(&majorVersion, &minorVersion, &build, &isServer, &is64))
 	{
-		/*	wcout << monOsValide->majorVersion<< L'\t' << majorVersion << endl;
-			wcout << monOsValide->minorVersion<< L'\t' << minorVersion << endl;
-			wcout << monOsValide->build<< L'\t' << build << endl;
-			wcout << monOsValide->isServer<< L'\t' << isServer << endl;
-			wcout << monOsValide->is64<< L'\t' << is64 << endl;
-		*/	
 			reussite = 
 				(monOsValide->majorVersion == majorVersion) &&
 				(monOsValide->minorVersion == minorVersion) &&
@@ -97,10 +94,6 @@ bool mod_patch::checkVersion(KIWI_OS_CHECK * monOsValide)
 				(monOsValide->isServer == isServer) &&
 				(monOsValide->is64 == is64)
 				;
-
-		/*	wcout << reussite << endl;
-			wcout << endl;
-		*/
 	}
 	else wcout << L"mod_patch::getFullVersion : " << mod_system::getWinError() << endl;
 	return reussite;

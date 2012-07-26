@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mod_crypto.h"
 
 bool mod_crypto::getSystemStoreFromString(wstring strSystemStore, DWORD * systemStore)
@@ -169,13 +174,5 @@ bool mod_crypto::PrivateKeyBlobToPVK(BYTE * monExport, DWORD tailleExport, wstri
 		CloseHandle(hFile);
 	}
 
-/*
-	HANDLE hFile = CreateFile(pvkFile.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
-	DWORD dwBytesWritten;
-	WriteFile(hFile, monHead, sizeof(monHead), &dwBytesWritten, NULL);
-	WriteFile(hFile, &tailleExport, sizeof(tailleExport), &dwBytesWritten, NULL);
-	WriteFile(hFile, monExport, tailleExport, &dwBytesWritten, NULL);
-	CloseHandle(hFile);
-*/
 	return retour;
 }

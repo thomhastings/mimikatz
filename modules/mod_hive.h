@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #pragma once
 #include "globdefs.h"
 using namespace std;
@@ -81,4 +86,3 @@ private:
 	static int* read_valuevector(int *value, hive *h, int offset, int size);
 	
 };
-
