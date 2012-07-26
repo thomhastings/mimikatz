@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mod_mimikatz_crypto.h"
 
 bool mod_mimikatz_crypto::isNT6 = GetProcAddress(GetModuleHandle(L"ntdll"), "NtCreateThreadEx") != NULL;

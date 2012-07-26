@@ -103,6 +103,4 @@ bool mod_ts::getProcesses(vector<KIWI_WTS_PROCESS_INFO> * mesProcesses, wstring 
 	}
 	
 	return reussite;
-
-
 }

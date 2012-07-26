@@ -1,3 +1,8 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+*/
 #include "mod_service.h"
 
 bool mod_service::getList(vector<KIWI_SERVICE_STATUS_PROCESS> * monVectorService, wstring * machineName) // machine non implémenté
