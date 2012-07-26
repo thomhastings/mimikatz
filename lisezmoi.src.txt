@@ -1,0 +1,16 @@
+mimikatz OpenSource
+===================
+       ...en partie
+
+Cette archive ne contient, pour le moment, que des extraits de différents codes source. Les binaires complets sont disponibles : http://blog.gentilkiwi.com/mimikatz
+Ces codes ne peuvent être utilisés qu'à des fins d'études, pentests et autres actions légales en accord avec la licence précisée ci-dessous.
+
+Plus globalement, merci de respecter la philosophie avec laquelle ces codes ont été créés, c'est à dire en ne permettant pas son utilisation à des fins malveillantes.
+Je ne serais en aucun cas responsable de l'utilisation qui serait faite de ces technologies.
+
+Binaires, codes source, dérivés et utilisations sous licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+Exception pour la librairie sekurlsa : http://creativecommons.org/licenses/by/3.0/fr/
+_____________________________________________________
+Benjamin DELPY `gentilkiwi`
+http://blog.gentilkiwi.com/mimikatz
+benjamin@gentilkiwi.com
