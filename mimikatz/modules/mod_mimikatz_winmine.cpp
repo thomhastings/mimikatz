@@ -83,19 +83,19 @@ bool mod_mimikatz_winmine::infosOrCheat(vector<wstring> * arguments, bool cheat)
 
 bool mod_mimikatz_winmine::pause(vector<wstring> * arguments)
 {
-	startThreadAt(OFFSETOF(structHandleAndAddr, addrPause));
+	startThreadAt(FIELD_OFFSET(structHandleAndAddr, addrPause));
 	return true;
 }
 
 bool mod_mimikatz_winmine::reprise(vector<wstring> * arguments)
 {
-	startThreadAt(OFFSETOF(structHandleAndAddr, addrResume));
+	startThreadAt(FIELD_OFFSET(structHandleAndAddr, addrResume));
 	return true;
 }
 
 bool mod_mimikatz_winmine::start(vector<wstring> * arguments)
 {
-	startThreadAt(OFFSETOF(structHandleAndAddr, addrStart));
+	startThreadAt(FIELD_OFFSET(structHandleAndAddr, addrStart));
 	return true;
 }
 

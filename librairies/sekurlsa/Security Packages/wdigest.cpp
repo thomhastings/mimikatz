@@ -78,7 +78,7 @@ bool WINAPI getWDigestLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in 
 	if(searchWDigestEntryList())
 	{
 		PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds = NULL;
-		if(PKIWI_WDIGEST_LIST_ENTRY pLogSession = reinterpret_cast<PKIWI_WDIGEST_LIST_ENTRY>(getPtrFromLinkedListByLuid(reinterpret_cast<PLIST_ENTRY>(l_LogSessList), OFFSETOF(KIWI_WDIGEST_LIST_ENTRY, LocallyUniqueIdentifier), logId)))
+		if(PKIWI_WDIGEST_LIST_ENTRY pLogSession = reinterpret_cast<PKIWI_WDIGEST_LIST_ENTRY>(getPtrFromLinkedListByLuid(reinterpret_cast<PLIST_ENTRY>(l_LogSessList), FIELD_OFFSET(KIWI_WDIGEST_LIST_ENTRY, LocallyUniqueIdentifier), logId)))
 		{
 			mesCreds = reinterpret_cast<PKIWI_GENERIC_PRIMARY_CREDENTIAL>(reinterpret_cast<PBYTE>(pLogSession) + offsetWDigestPrimary);
 		}

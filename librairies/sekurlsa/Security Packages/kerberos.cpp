@@ -109,7 +109,7 @@ bool WINAPI getKerberosLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in
 		}
 		else
 		{
-			if(PKIWI_KERBEROS_LOGON_SESSION pLogSession = reinterpret_cast<PKIWI_KERBEROS_LOGON_SESSION>(getPtrFromLinkedListByLuid(reinterpret_cast<PLIST_ENTRY>(KerbLogonSessionList), OFFSETOF(KIWI_KERBEROS_LOGON_SESSION, LocallyUniqueIdentifier) + offsetMagic, logId)))
+			if(PKIWI_KERBEROS_LOGON_SESSION pLogSession = reinterpret_cast<PKIWI_KERBEROS_LOGON_SESSION>(getPtrFromLinkedListByLuid(reinterpret_cast<PLIST_ENTRY>(KerbLogonSessionList), FIELD_OFFSET(KIWI_KERBEROS_LOGON_SESSION, LocallyUniqueIdentifier) + offsetMagic, logId)))
 			{
 				if(offsetMagic != 0)
 					pLogSession = reinterpret_cast<PKIWI_KERBEROS_LOGON_SESSION>(reinterpret_cast<PBYTE>(pLogSession) + offsetMagic);

@@ -304,7 +304,7 @@ bool mod_process::getIAT(PBYTE ptrBaseAddr, vector<pair<string, vector<KIWI_IAT_
 											if(HintNameArray->u1.Function)
 											{
 												KIWI_IAT_MODULE imageIAT = {
-													baseAddr + structImportDesc->FirstThunk + i*sizeof(IMAGE_THUNK_DATA) + OFFSETOF(IMAGE_THUNK_DATA, u1.Function),
+													baseAddr + structImportDesc->FirstThunk + i*sizeof(IMAGE_THUNK_DATA) + FIELD_OFFSET(IMAGE_THUNK_DATA, u1.Function),
 													reinterpret_cast<PVOID>(IATArray->u1.Function),
 													0,
 													string()
@@ -318,7 +318,7 @@ bool mod_process::getIAT(PBYTE ptrBaseAddr, vector<pair<string, vector<KIWI_IAT_
 												{
 													BYTE monTab[] = {0};
 													long offsetToNull;
-													if(mod_memory::searchMemory(baseAddr + HintNameArray->u1.AddressOfData + OFFSETOF(IMAGE_IMPORT_BY_NAME, Name), 255, monTab, &offsetToNull, sizeof(monTab), true, handleProcess))
+													if(mod_memory::searchMemory(baseAddr + HintNameArray->u1.AddressOfData + FIELD_OFFSET(IMAGE_IMPORT_BY_NAME, Name), 255, monTab, &offsetToNull, sizeof(monTab), true, handleProcess))
 													{
 														BYTE * ayIMAGE_IMPORT_BY_NAME = new BYTE[sizeof(IMAGE_IMPORT_BY_NAME) + offsetToNull];
 														if(mod_memory::readMemory(baseAddr + HintNameArray->u1.AddressOfData, ayIMAGE_IMPORT_BY_NAME, sizeof(IMAGE_IMPORT_BY_NAME) + offsetToNull, handleProcess))

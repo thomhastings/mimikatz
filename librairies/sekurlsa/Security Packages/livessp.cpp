@@ -45,7 +45,7 @@ bool WINAPI getLiveSSPLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in 
 	if(searchLiveGlobalLogonSessionList())
 	{
 		PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds = NULL;
-		if(PKIWI_LIVESSP_LIST_ENTRY pLogSession = reinterpret_cast<PKIWI_LIVESSP_LIST_ENTRY>(getPtrFromLinkedListByLuid(reinterpret_cast<PLIST_ENTRY>(LiveGlobalLogonSessionList), OFFSETOF(KIWI_LIVESSP_LIST_ENTRY, LocallyUniqueIdentifier), logId)))
+		if(PKIWI_LIVESSP_LIST_ENTRY pLogSession = reinterpret_cast<PKIWI_LIVESSP_LIST_ENTRY>(getPtrFromLinkedListByLuid(reinterpret_cast<PLIST_ENTRY>(LiveGlobalLogonSessionList), FIELD_OFFSET(KIWI_LIVESSP_LIST_ENTRY, LocallyUniqueIdentifier), logId)))
 		{
 			if(pLogSession->suppCreds && pLogSession->suppCreds->isSupp)
 			{

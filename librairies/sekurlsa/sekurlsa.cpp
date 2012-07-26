@@ -35,7 +35,7 @@ bool searchLSAFuncs()
 		{
 			struct {PVOID LsaIRegisterNotification; PVOID LsaICancelNotification;} extractPkgFunctionTable = {GetProcAddress(hLsasrv, "LsaIRegisterNotification"), GetProcAddress(hLsasrv, "LsaICancelNotification")};
 			if(extractPkgFunctionTable.LsaIRegisterNotification && extractPkgFunctionTable.LsaICancelNotification)
-				mod_memory::genericPatternSearch(reinterpret_cast<PBYTE *>(&SeckPkgFunctionTable), L"lsasrv", reinterpret_cast<PBYTE>(&extractPkgFunctionTable), sizeof(extractPkgFunctionTable), -OFFSETOF(LSA_SECPKG_FUNCTION_TABLE, RegisterNotification), NULL, true, true);
+				mod_memory::genericPatternSearch(reinterpret_cast<PBYTE *>(&SeckPkgFunctionTable), L"lsasrv", reinterpret_cast<PBYTE>(&extractPkgFunctionTable), sizeof(extractPkgFunctionTable), - FIELD_OFFSET(LSA_SECPKG_FUNCTION_TABLE, RegisterNotification), NULL, true, true);
 		}
 	}
 	return (SeckPkgFunctionTable != NULL);

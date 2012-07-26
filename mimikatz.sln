@@ -22,6 +22,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KiwiTaskmgr", "antigpo_standalone\KiwiTaskmgr\KiwiTaskmgr.vcxproj", "{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859}"
 EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
