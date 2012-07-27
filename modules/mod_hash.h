@@ -16,6 +16,22 @@ private:
 	static PRTL_INIT_UNICODESTRING RtlInitUnicodeString;
 	static PRTL_FREE_OEM_STRING RtlFreeOemString;
 
+	typedef BYTE DES_cblock[8];
+
+	typedef struct _KEY_BLOB {
+		DWORD dwDefault;
+		DWORD dwAlgID;
+		DWORD dwKeyLen;
+		BYTE Key[16];
+	} KEY_BLOB;
+
+	typedef struct _DESKEY_BLOB {
+		BLOBHEADER BlobHeader;
+		DWORD dwKeyLen;
+		BYTE Key[8];
+	} DESKEY_BLOB;
+
+	static void RC4Crypt(BYTE * rc4_key, BYTE * ClearText, BYTE * EncryptBuffer);
 public:
 	typedef enum _KIWI_HASH_TYPE
 	{
@@ -23,6 +39,60 @@ public:
 		NTLM
 	} KIWI_HASH_TYPE;
 
+	typedef struct _SAM_ENTRY {
+	DWORD offset;
+	DWORD lenght;
+	DWORD unk;
+} SAM_ENTRY, *PSAM_SENTRY;
+
+	typedef struct _OLD_LARGE_INTEGER {
+		unsigned long LowPart;
+		long HighPart;
+	} OLD_LARGE_INTEGER, *POLD_LARGE_INTEGER;
+
+
+	typedef struct _USER_F { // http://www.beginningtoseethelight.org/ntsecurity/index.php#D3BC3F5643A17823
+		DWORD unk0_header;
+		DWORD align;
+		OLD_LARGE_INTEGER LastLogon;
+		OLD_LARGE_INTEGER LastLogoff;
+		OLD_LARGE_INTEGER PasswordLastSet;
+		OLD_LARGE_INTEGER AccountExpires;
+		OLD_LARGE_INTEGER PasswordMustChange;
+		unsigned long UserId;
+		unsigned long unk1;
+		unsigned long UserAccountControl;
+	} USER_F, *PUSER_F;
+
+	typedef struct _USER_V {
+		SAM_ENTRY unk0;
+		SAM_ENTRY Username;
+		SAM_ENTRY Fullname;
+		SAM_ENTRY Comment;
+		SAM_ENTRY UserComment;
+		SAM_ENTRY unk1;
+		SAM_ENTRY Homedir;
+		SAM_ENTRY Homedirconnect;
+		SAM_ENTRY Scriptpath;
+		SAM_ENTRY Profilepath;
+		SAM_ENTRY Workstations;
+		SAM_ENTRY HoursAllowed;
+		SAM_ENTRY unk2;
+		SAM_ENTRY LM;
+		SAM_ENTRY NTLM;
+		SAM_ENTRY unk3;
+		SAM_ENTRY unk4;
+		BYTE datas;
+	} USER_V, *PUSER_V;
+
 	static bool lm(wstring * chaine, wstring * hash);
 	static bool ntlm(wstring * chaine, wstring * hash);
+
+	static void getBootKeyFromKey(BYTE bootkey[0x10], BYTE key[0x10]);
+	static bool getHbootKeyFromBootKeyAndF(BYTE hBootKey[0x20], BYTE bootKey[0x10], BYTE * AccountsF);
+	static bool decryptHash(wstring * hash, BYTE * hBootKey, USER_V * userV, SAM_ENTRY * encHash, unsigned long rid, bool isNtlm);
+	static void str_to_key(unsigned char *str,unsigned char *key);
+	static void sid_to_key1(unsigned long sid,unsigned char deskey[8]);
+	static void sid_to_key2(unsigned long sid,unsigned char deskey[8]);
+	static void des_set_odd_parity(DES_cblock * key);
 };

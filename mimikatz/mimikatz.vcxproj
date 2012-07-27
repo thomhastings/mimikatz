@@ -113,6 +113,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\commun\globdefs.h" />
     <ClInclude Include="..\modules\mod_crypto.h" />
     <ClInclude Include="..\modules\mod_cryptoapi.h" />
     <ClInclude Include="..\modules\mod_cryptong.h" />

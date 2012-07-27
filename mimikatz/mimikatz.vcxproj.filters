@@ -184,6 +184,7 @@
     <ClInclude Include="modules\mod_mimikatz_minesweeper.h">
       <Filter>Modules locaux pour mimikatz\Démineur</Filter>
     </ClInclude>
+    <ClInclude Include="..\commun\globdefs.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
