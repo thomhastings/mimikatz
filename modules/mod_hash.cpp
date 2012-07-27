@@ -55,13 +55,9 @@ void mod_hash::RC4Crypt(BYTE * rc4_key, BYTE * ClearText, BYTE * EncryptBuffer)
 
 	if(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
 	{
-		KEY_BLOB DesKeyBlob;
-		DesKeyBlob.dwDefault = 0x0208;
-		DesKeyBlob.dwAlgID = CALG_RC4;
-		DesKeyBlob.dwKeyLen = 0x10;
-		RtlCopyMemory(DesKeyBlob.Key, rc4_key, sizeof(DesKeyBlob.Key));
-
-		if(CryptImportKey(hCryptProv, (BYTE *)&DesKeyBlob, sizeof(DesKeyBlob), 0, CRYPT_EXPORTABLE, &hKey))
+		RC4KEY_BLOB Rc4KeyBlob = {{PLAINTEXTKEYBLOB, CUR_BLOB_VERSION, 0, CALG_RC4}, 16, {0}};
+		RtlCopyMemory(Rc4KeyBlob.Key, rc4_key, sizeof(Rc4KeyBlob.Key));
+		if(CryptImportKey(hCryptProv, (BYTE *)&Rc4KeyBlob, sizeof(Rc4KeyBlob), 0, CRYPT_EXPORTABLE, &hKey))
 		{
 			RtlCopyMemory(EncryptBuffer, ClearText, 0x10);
 			DWORD dwWorkingBufferLength = 0x10;
@@ -124,21 +120,14 @@ bool mod_hash::decryptHash(wstring * hash, BYTE * hBootKey, USER_V * userV, SAM_
 
 			if(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
 			{
-				DESKEY_BLOB DesKeyBlob;
+				DWORD dwWorkingBufferLength;
+				DESKEY_BLOB DesKeyBlob = {{PLAINTEXTKEYBLOB, CUR_BLOB_VERSION, 0, CALG_DES}, 8, {0}};
 				HCRYPTKEY hKey = NULL;
 
-				DWORD dwWorkingBufferLength;
-
-				DesKeyBlob.BlobHeader.bType = PLAINTEXTKEYBLOB;
-				DesKeyBlob.BlobHeader.bVersion = CUR_BLOB_VERSION;
-				DesKeyBlob.BlobHeader.aiKeyAlg = CALG_DES;
-				DesKeyBlob.BlobHeader.reserved = 0;
-				DesKeyBlob.dwKeyLen = 8;
-				
 				sid_to_key1(rid, DesKeyBlob.Key);
 				dwWorkingBufferLength = sizeof(obfkey) / 2;
 				CryptImportKey(hCryptProv, (BYTE *) &DesKeyBlob, sizeof(DesKeyBlob), 0, CRYPT_EXPORTABLE, &hKey);
-				CryptDecrypt(hKey, NULL, TRUE, 0, obfkey, &dwWorkingBufferLength);
+				CryptDecrypt(hKey, NULL, TRUE, 0, obfkey + 0, &dwWorkingBufferLength);
 				CryptDestroyKey(hKey);
 				
 				sid_to_key2(rid, DesKeyBlob.Key);

@@ -18,12 +18,11 @@ private:
 
 	typedef BYTE DES_cblock[8];
 
-	typedef struct _KEY_BLOB {
-		DWORD dwDefault;
-		DWORD dwAlgID;
+	typedef struct _RC4KEY_BLOB {
+		BLOBHEADER BlobHeader;
 		DWORD dwKeyLen;
 		BYTE Key[16];
-	} KEY_BLOB;
+	} RC4KEY_BLOB;
 
 	typedef struct _DESKEY_BLOB {
 		BLOBHEADER BlobHeader;

