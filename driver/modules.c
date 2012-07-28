@@ -47,7 +47,6 @@ NTSTATUS kModulesList(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t
 	return status;	
 }
 
-
 NTSTATUS getModuleFromAddr(ULONG_PTR theAddr, LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining)
 {
 	NTSTATUS status = STATUS_SUCCESS;

@@ -175,6 +175,7 @@ NTSTATUS getLocalFuncFromName(PWSTR buffer, size_t taille, PWSTR *params, size_t
 			KIWI_NameToFunc(L"listNotifImages", kListNotifyImages);
 			KIWI_NameToFunc(L"listNotifRegistry", kListNotifyRegistry);
 			KIWI_NameToFunc(L"listNotifObjects", kListNotifyObjects);
+			KIWI_NameToFunc(L"clearNotifObjects", kClearNotifyObjects);
 			
 			KIWI_NameToFunc(L"listProcesses", listProcesses);
 			KIWI_NameToFunc(L"sysToken", sysToken);

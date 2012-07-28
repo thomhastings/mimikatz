@@ -1,5 +1,4 @@
 #pragma once
-//#include <ntddk.h>
 #include <ntifs.h>
 #include "k_types.h"
 #include "modules.h"
@@ -25,6 +24,13 @@ PVOID * PspLoadImageNotifyRoutine;
 ULONG * CmpCallBackCount;
 PVOID * CmpCallBackVector;
 PLIST_ENTRY CallbackListHead;
+
+typedef enum _KIWI_NOTIF_ACTION
+{
+	ListNotif,
+	ClearNotif
+} KIWI_EPROCESS_ACTION;
+
 
 typedef struct _KIWI_CALLBACK
 {
@@ -127,4 +133,6 @@ NTSTATUS getNotifyRegistryRoutine();
 POBJECT_DIRECTORY * ObpTypeDirectoryObject;
 
 NTSTATUS kListNotifyObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining);
+NTSTATUS kClearNotifyObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining);
+NTSTATUS listNotifyOrClearObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining, KIWI_EPROCESS_ACTION action);
 NTSTATUS getObpTypeDirectoryObject();

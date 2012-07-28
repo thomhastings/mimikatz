@@ -191,6 +191,16 @@ const WCHAR *procCallToName[] = {
 
 NTSTATUS kListNotifyObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining)
 {
+	return listNotifyOrClearObjects(pszDest, cbDest, ppszDestEnd, pcbRemaining, ListNotif);	
+}
+
+NTSTATUS kClearNotifyObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining)
+{
+	return listNotifyOrClearObjects(pszDest, cbDest, ppszDestEnd, pcbRemaining, ClearNotif);	
+}
+
+NTSTATUS listNotifyOrClearObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining, KIWI_EPROCESS_ACTION action)
+{
 	NTSTATUS status;
 	ULONG i, j;
 	POBJECT_DIRECTORY_ENTRY monEntree;
@@ -217,41 +227,40 @@ NTSTATUS kListNotifyObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, 
 							if(INDEX_OS < INDEX_VISTA)
 								monType = (POBJECT_TYPE) ((ULONG_PTR) (monType) + sizeof(ERESOURCE));
 							
-							status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L"\n%wZ\n", &(monType->Name));
-							for(j = 0; (j < 8) && NT_SUCCESS(status); j++)
+							if(action == ListNotif)
 							{
-								miniProc = (PVOID *) (((ULONG_PTR) &(monType->TypeInfo)) + OFFSETOF(OBJECT_TYPE_INITIALIZER, DumpProcedure) + sizeof(PVOID)*j
-								#ifdef _M_IX86
-									- ((INDEX_OS < INDEX_VISTA) ? sizeof(ULONG) : 0)
-								#endif
-								);
-								if(*miniProc)
+								status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L"\n%wZ\n", &(monType->Name));
+								for(j = 0; (j < 8) && NT_SUCCESS(status); j++)
 								{
-									status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L" - %ws : ", procCallToName[j]);
-									if(NT_SUCCESS(status))
+									miniProc = (PVOID *) (((ULONG_PTR) &(monType->TypeInfo)) + OFFSETOF(OBJECT_TYPE_INITIALIZER, DumpProcedure) + sizeof(PVOID)*j
+									#ifdef _M_IX86
+										- ((INDEX_OS < INDEX_VISTA) ? sizeof(ULONG) : 0)
+									#endif
+									);
+									if(*miniProc)
 									{
-										status = getModuleFromAddr((ULONG_PTR) *miniProc, *ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining);
-										if(NT_SUCCESS(status) || status == STATUS_NOT_FOUND)
+										status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L" - %ws : ", procCallToName[j]);
+										if(NT_SUCCESS(status))
 										{
-											status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L"\n");
+											status = getModuleFromAddr((ULONG_PTR) *miniProc, *ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining);
+											if(NT_SUCCESS(status) || status == STATUS_NOT_FOUND)
+											{
+												status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L"\n");
+											}
 										}
 									}
 								}
 							}
-							
 							if(INDEX_OS >= INDEX_VISTA)
 							{
 								if(INDEX_OS < INDEX_7)
-									monTypeDecal = (POBJECT_TYPE) ((ULONG_PTR) (monType) + sizeof(ERESOURCE) + 32*sizeof(EX_PUSH_LOCK));
-								else
-									monTypeDecal = monType;
+									monType = (POBJECT_TYPE) ((ULONG_PTR) (monType) + sizeof(ERESOURCE) + 32*sizeof(EX_PUSH_LOCK));
 									
-								for(pStruct = (POBJECT_CALLBACK_ENTRY) (monTypeDecal->CallbackList.Flink) ; (pStruct != (POBJECT_CALLBACK_ENTRY) &(monTypeDecal->CallbackList)) && NT_SUCCESS(status) ; pStruct = (POBJECT_CALLBACK_ENTRY) pStruct->CallbackList.Flink)
+								for(pStruct = (POBJECT_CALLBACK_ENTRY) (monType->CallbackList.Flink) ; (pStruct != (POBJECT_CALLBACK_ENTRY) &(monType->CallbackList)) && NT_SUCCESS(status) ; pStruct = (POBJECT_CALLBACK_ENTRY) pStruct->CallbackList.Flink)
 								{
 									if(pStruct->PreOperation || pStruct->PostOperation)
 									{
 										status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L" * Callback %u  : ", pStruct->Operations, pStruct->PreOperation);;
-									
 										if(NT_SUCCESS(status))
 										{
 											status = getModuleFromAddr((ULONG_PTR) pStruct->PreOperation, *ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining);
@@ -267,7 +276,13 @@ NTSTATUS kListNotifyObjects(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, 
 													}
 												}
 											}
-											
+										}
+										
+										if(action == ClearNotif)
+										{
+											pStruct->PreOperation = NULL;
+											pStruct->PostOperation = NULL;
+											status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L" -> NULL !\n");
 										}
 									}
 								}
