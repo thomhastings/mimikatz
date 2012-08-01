@@ -6,7 +6,7 @@
 */
 #include "tspkg.h"
 
-PRTL_AVL_TABLE TSGlobalCredTable = reinterpret_cast<PRTL_AVL_TABLE>(NULL);
+PRTL_AVL_TABLE TSGlobalCredTable = NULL;
 
 bool searchTSPKGFuncs()
 {

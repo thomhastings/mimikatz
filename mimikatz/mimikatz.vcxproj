@@ -114,6 +114,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\commun\globdefs.h" />
+    <ClInclude Include="..\commun\secpkg.h" />
     <ClInclude Include="..\modules\mod_crypto.h" />
     <ClInclude Include="..\modules\mod_cryptoapi.h" />
     <ClInclude Include="..\modules\mod_cryptong.h" />
@@ -146,12 +147,18 @@
     <ClInclude Include="modules\mod_mimikatz_process.h" />
     <ClInclude Include="modules\mod_mimikatz_samdump.h" />
     <ClInclude Include="modules\mod_mimikatz_impersonate.h" />
+    <ClInclude Include="modules\mod_mimikatz_sekurlsa.h" />
     <ClInclude Include="modules\mod_mimikatz_service.h" />
     <ClInclude Include="modules\mod_mimikatz_standard.h" />
     <ClInclude Include="modules\mod_mimikatz_system.h" />
     <ClInclude Include="modules\mod_mimikatz_terminalserver.h" />
     <ClInclude Include="modules\mod_mimikatz_thread.h" />
     <ClInclude Include="modules\mod_mimikatz_winmine.h" />
+    <ClInclude Include="modules\Security Packages\kerberos.h" />
+    <ClInclude Include="modules\Security Packages\livessp.h" />
+    <ClInclude Include="modules\Security Packages\msv1_0.h" />
+    <ClInclude Include="modules\Security Packages\tspkg.h" />
+    <ClInclude Include="modules\Security Packages\wdigest.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\modules\mod_crypto.cpp" />
@@ -186,12 +193,18 @@
     <ClCompile Include="modules\mod_mimikatz_process.cpp" />
     <ClCompile Include="modules\mod_mimikatz_samdump.cpp" />
     <ClCompile Include="modules\mod_mimikatz_impersonate.cpp" />
+    <ClCompile Include="modules\mod_mimikatz_sekurlsa.cpp" />
     <ClCompile Include="modules\mod_mimikatz_service.cpp" />
     <ClCompile Include="modules\mod_mimikatz_standard.cpp" />
     <ClCompile Include="modules\mod_mimikatz_system.cpp" />
     <ClCompile Include="modules\mod_mimikatz_terminalserver.cpp" />
     <ClCompile Include="modules\mod_mimikatz_thread.cpp" />
     <ClCompile Include="modules\mod_mimikatz_winmine.cpp" />
+    <ClCompile Include="modules\Security Packages\kerberos.cpp" />
+    <ClCompile Include="modules\Security Packages\livessp.cpp" />
+    <ClCompile Include="modules\Security Packages\msv1_0.cpp" />
+    <ClCompile Include="modules\Security Packages\tspkg.cpp" />
+    <ClCompile Include="modules\Security Packages\wdigest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="mimikatz.rc" />

@@ -19,9 +19,9 @@ using namespace std;
 
 #define MIMIKATZ L"mimikatz"
 #ifdef _M_X64
-	#define MIMIKATZ_FULL L"mimikatz 1.0 x64 (beta)"
+	#define MIMIKATZ_FULL L"mimikatz 1.0 x64 (RC)"
 #else ifdef
-	#define MIMIKATZ_FULL L"mimikatz 1.0 x86 (beta)"
+	#define MIMIKATZ_FULL L"mimikatz 1.0 x86 (RC)"
 #endif
 
 #define NT_SUCCESS(Status)			(((NTSTATUS)(Status)) >= 0)

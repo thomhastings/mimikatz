@@ -6,7 +6,7 @@
 */
 #include "livessp.h"
 
-PKIWI_LIVESSP_LIST_ENTRY LiveGlobalLogonSessionList = reinterpret_cast<PKIWI_LIVESSP_LIST_ENTRY>(NULL);
+PKIWI_LIVESSP_LIST_ENTRY LiveGlobalLogonSessionList = NULL;
 
 bool searchLiveGlobalLogonSessionList()
 {

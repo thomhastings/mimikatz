@@ -127,13 +127,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\commun\kmodel.h" />
+    <ClInclude Include="..\..\commun\secpkg.h" />
     <ClInclude Include="..\..\modules\mod_memory.h" />
     <ClInclude Include="..\..\modules\mod_parseur.h" />
     <ClInclude Include="..\..\modules\mod_pipe.h" />
     <ClInclude Include="..\..\modules\mod_system.h" />
     <ClInclude Include="..\..\modules\mod_text.h" />
     <ClInclude Include="sam.h" />
-    <ClInclude Include="secpkg.h" />
     <ClInclude Include="secrets.h" />
     <ClInclude Include="Security Packages\kerberos.h" />
     <ClInclude Include="Security Packages\livessp.h" />

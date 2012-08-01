@@ -458,9 +458,8 @@ bool mod_mimikatz_crypto::patchcapi(vector<wstring> * arguments)
 
 bool mod_mimikatz_crypto::patchcng(vector<wstring> * arguments)
 {
-	wchar_t LIBNAME_WNO8_NCrypt[]					= L"ncrypt.dll";
-	wchar_t LIBNAME_WIN8_NCrypt[]					= L"ncryptprov.dll";
-
+	wchar_t LIBNAME_WNO8_NCrypt[]				= L"ncrypt.dll";
+	wchar_t LIBNAME_WIN8_NCrypt[]				= L"ncryptprov.dll";
 #ifdef _M_X64
 	BYTE PTRN_WNO8_SPCryptExportKey[]			= {0xf6, 0x43, 0x28, 0x02, 0x75};
 	BYTE PTRN_WIN8_SPCryptExportKey[]			= {0xf6, 0x43, 0x24, 0x02, 0x75};

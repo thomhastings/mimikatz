@@ -18,9 +18,9 @@ int wmain(int argc, wchar_t * argv[])
 	/*SetConsoleCP(CP_UTF8);
 	SetConsoleOutputCP(CP_UTF8);*/
 	
-	//vector<wstring> * mavectore = new vector<wstring>(argv, argv + argc);
-	mimikatz * myMimiKatz = new mimikatz(/*mavectore*/);
-	delete myMimiKatz;
-	//delete mavectore;
+	vector<wstring> * mesArguments = new vector<wstring>(argv + 1, argv + argc);
+	
+	mimikatz * myMimiKatz = new mimikatz(mesArguments);
+	delete myMimiKatz, mesArguments;
 	return ERROR_SUCCESS;
 }

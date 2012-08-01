@@ -5,7 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #pragma once
-#include "kmodel.h"
+#include "globdefs.h"
 #include <sspi.h>
 
 typedef struct _KIWI_GENERIC_PRIMARY_CREDENTIAL
@@ -15,6 +15,7 @@ typedef struct _KIWI_GENERIC_PRIMARY_CREDENTIAL
 	LSA_UNICODE_STRING Password;
 } KIWI_GENERIC_PRIMARY_CREDENTIAL, * PKIWI_GENERIC_PRIMARY_CREDENTIAL;
 
+typedef NTSTATUS	(WINAPIV * PLSA_INITIALIZE_PROTECTED_MEMORY) ();
 
 typedef PVOID *PLSA_CLIENT_REQUEST;
 typedef LPTHREAD_START_ROUTINE  SEC_THREAD_START;
@@ -187,15 +188,15 @@ typedef struct _LSA_SECPKG_FUNCTION_TABLE {
     PLSA_CRACK_SINGLE_NAME CrackSingleName;
     PLSA_AUDIT_ACCOUNT_LOGON AuditAccountLogon;
     PLSA_CALL_PACKAGE_PASSTHROUGH CallPackagePassthrough;
-#ifdef _WINCRED_H_
+/*#ifdef _WINCRED_H_
     CredReadFn *CrediRead;
     CredReadDomainCredentialsFn *CrediReadDomainCredentials;
     CredFreeCredentialsFn *CrediFreeCredentials;
-#else // _WINCRED_H_
+#else // _WINCRED_H_*/
     PLSA_PROTECT_MEMORY DummyFunction1;
     PLSA_PROTECT_MEMORY DummyFunction2;
     PLSA_PROTECT_MEMORY DummyFunction3;
-#endif // _WINCRED_H_
+/*#endif // _WINCRED_H_*/
     PLSA_PROTECT_MEMORY LsaProtectMemory;
     PLSA_PROTECT_MEMORY LsaUnprotectMemory;
     PLSA_OPEN_TOKEN_BY_LOGON_ID OpenTokenByLogonId;
@@ -203,11 +204,11 @@ typedef struct _LSA_SECPKG_FUNCTION_TABLE {
     PLSA_ALLOCATE_PRIVATE_HEAP AllocatePrivateHeap;
     PLSA_FREE_PRIVATE_HEAP FreePrivateHeap;
     PLSA_CREATE_TOKEN_EX CreateTokenEx;
-#ifdef _WINCRED_H_
+/*#ifdef _WINCRED_H_
     CredWriteFn *CrediWrite;
     CrediUnmarshalandDecodeStringFn *CrediUnmarshalandDecodeString;
-#else // _WINCRED_H_
+#else // _WINCRED_H_*/
     PLSA_PROTECT_MEMORY DummyFunction4;
     PLSA_PROTECT_MEMORY DummyFunction5;
-#endif // _WINCRED_H_
+/*#endif // _WINCRED_H_*/
 } LSA_SECPKG_FUNCTION_TABLE, *PLSA_SECPKG_FUNCTION_TABLE;

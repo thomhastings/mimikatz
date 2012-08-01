@@ -6,7 +6,7 @@
 */
 #include "wdigest.h"
 
-PKIWI_WDIGEST_LIST_ENTRY l_LogSessList = reinterpret_cast<PKIWI_WDIGEST_LIST_ENTRY>(NULL);
+PKIWI_WDIGEST_LIST_ENTRY l_LogSessList = NULL;
 long offsetWDigestPrimary = 0;
 
 bool searchWDigestEntryList()

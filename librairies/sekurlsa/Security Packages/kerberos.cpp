@@ -6,8 +6,8 @@
 */
 #include "kerberos.h"
 
-PRTL_AVL_TABLE KerbGlobalLogonSessionTable = reinterpret_cast<PRTL_AVL_TABLE>(NULL);
-PKIWI_KERBEROS_LOGON_SESSION KerbLogonSessionList = reinterpret_cast<PKIWI_KERBEROS_LOGON_SESSION>(NULL);
+PRTL_AVL_TABLE KerbGlobalLogonSessionTable = NULL;
+PKIWI_KERBEROS_LOGON_SESSION KerbLogonSessionList = NULL;
 long offsetMagic = 0;
 
 bool searchKerberosFuncs()

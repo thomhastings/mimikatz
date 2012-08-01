@@ -97,7 +97,6 @@
     <ClInclude Include="Security Packages\livessp.h">
       <Filter>Security Packages</Filter>
     </ClInclude>
-    <ClInclude Include="secpkg.h" />
     <ClInclude Include="Security Packages\msv1_0_helper.h">
       <Filter>Security Packages</Filter>
     </ClInclude>
@@ -110,6 +109,7 @@
     <ClInclude Include="..\..\modules\mod_text.h">
       <Filter>Modules Communs\Texte</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\commun\secpkg.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sekurlsa.rc" />

@@ -6,7 +6,7 @@
 */
 #include "sekurlsa.h"
 
-PLSA_SECPKG_FUNCTION_TABLE SeckPkgFunctionTable = reinterpret_cast<PLSA_SECPKG_FUNCTION_TABLE>(NULL);
+PLSA_SECPKG_FUNCTION_TABLE SeckPkgFunctionTable = NULL;
 PRTL_LOOKUP_ELEMENT_GENERIC_TABLE_AV RtlLookupElementGenericTableAvl = reinterpret_cast<PRTL_LOOKUP_ELEMENT_GENERIC_TABLE_AV>(GetProcAddress(GetModuleHandle(L"ntdll"), "RtlLookupElementGenericTableAvl"));
 
 vector<pair<PFN_ENUM_BY_LUID, wstring>> GLOB_ALL_Providers;

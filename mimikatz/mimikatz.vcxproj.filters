@@ -70,6 +70,12 @@
     <Filter Include="Modules Communs\Texte">
       <UniqueIdentifier>{a5ed030b-28fe-41b0-9f63-b254fd57400f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules locaux pour mimikatz\SekurLSA">
+      <UniqueIdentifier>{77e8ad35-fa4d-4e0d-afdc-ae3060d5370a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Modules locaux pour mimikatz\SekurLSA\Security Packages">
+      <UniqueIdentifier>{43b545d3-ad41-4c42-970d-7850d77b5432}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mimikatz.h" />
@@ -185,6 +191,27 @@
       <Filter>Modules locaux pour mimikatz\Démineur</Filter>
     </ClInclude>
     <ClInclude Include="..\commun\globdefs.h" />
+    <ClInclude Include="modules\mod_mimikatz_sekurlsa.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\Security Packages\wdigest.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\Security Packages\kerberos.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\Security Packages\tspkg.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\Security Packages\livessp.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\Security Packages\msv1_0.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClInclude>
+    <ClInclude Include="..\commun\secpkg.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -296,6 +323,24 @@
     </ClCompile>
     <ClCompile Include="modules\mod_mimikatz_minesweeper.cpp">
       <Filter>Modules locaux pour mimikatz\Démineur</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\mod_mimikatz_sekurlsa.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\Security Packages\wdigest.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\Security Packages\kerberos.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\Security Packages\tspkg.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\Security Packages\livessp.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\Security Packages\msv1_0.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

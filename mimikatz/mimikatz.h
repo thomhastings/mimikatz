@@ -27,6 +27,7 @@
 #include "modules/mod_mimikatz_terminalserver.h"
 #include "modules/mod_mimikatz_divers.h"
 #include "modules/mod_mimikatz_impersonate.h"
+#include "modules/mod_mimikatz_sekurlsa.h"
 
 class mimikatz
 {
@@ -48,8 +49,7 @@ private:
 	HANDLE Kmimikatz;
 
 public:
-	mimikatz(void);
-	//mimikatz(vector<wstring> * commandLine);
+	mimikatz(vector<wstring> * mesArguments = NULL);
 	virtual ~mimikatz(void);
 };
 
