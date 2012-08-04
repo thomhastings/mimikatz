@@ -17,4 +17,3 @@ public:
 	static wstring stringOrHex(BYTE monTab[], DWORD maTaille, DWORD longueur = 32);
 	static void wstringHexToByte(wstring &maChaine, BYTE monTab[]);
 };
-

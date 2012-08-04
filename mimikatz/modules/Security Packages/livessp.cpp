@@ -5,7 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #include "livessp.h"
-mod_process::PKIWI_MODULEENTRY32 mod_mimikatz_sekurlsa_livessp::pModLIVESSP = NULL;
+mod_process::PKIWI_VERY_BASIC_MODULEENTRY mod_mimikatz_sekurlsa_livessp::pModLIVESSP = NULL;
 mod_mimikatz_sekurlsa_livessp::PKIWI_LIVESSP_LIST_ENTRY mod_mimikatz_sekurlsa_livessp::LiveGlobalLogonSessionList = NULL;//reinterpret_cast<mod_mimikatz_sekurlsa_livessp::PKIWI_LIVESSP_LIST_ENTRY>(NULL);
 
 bool mod_mimikatz_sekurlsa_livessp::getLiveSSP(vector<wstring> * arguments)

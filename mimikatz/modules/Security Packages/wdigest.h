@@ -23,7 +23,7 @@ private:
 	static bool searchWDigestEntryList();
 
 public:
-	static mod_process::PKIWI_MODULEENTRY32 pModWDIGEST;
+	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModWDIGEST;
 	static bool getWDigest(vector<wstring> * arguments);
 	static bool WINAPI getWDigestLogonData(__in PLUID logId, __in bool justSecurity);
 };

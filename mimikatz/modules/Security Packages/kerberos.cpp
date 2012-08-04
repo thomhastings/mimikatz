@@ -5,7 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #include "kerberos.h"
-mod_process::PKIWI_MODULEENTRY32 mod_mimikatz_sekurlsa_kerberos::pModKERBEROS = NULL;
+mod_process::PKIWI_VERY_BASIC_MODULEENTRY mod_mimikatz_sekurlsa_kerberos::pModKERBEROS = NULL;
 mod_mimikatz_sekurlsa_kerberos::PKIWI_KERBEROS_LOGON_SESSION mod_mimikatz_sekurlsa_kerberos::KerbLogonSessionList = NULL; //reinterpret_cast<mod_mimikatz_sekurlsa_kerberos::PKIWI_KERBEROS_LOGON_SESSION>(NULL);
 long mod_mimikatz_sekurlsa_kerberos::offsetMagic = 0;
 PRTL_AVL_TABLE mod_mimikatz_sekurlsa_kerberos::KerbGlobalLogonSessionTable = NULL; //reinterpret_cast<PRTL_AVL_TABLE>(NULL);

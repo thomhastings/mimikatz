@@ -51,7 +51,7 @@ private:
 public:
 	static HANDLE hLSASS;
 	static HMODULE hLsaSrv;
-	static mod_process::PKIWI_MODULEENTRY32 pModLSASRV;
+	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModLSASRV;
 	static PLSA_SECPKG_FUNCTION_TABLE SeckPkgFunctionTable;
 
 	static bool searchLSASSDatas();

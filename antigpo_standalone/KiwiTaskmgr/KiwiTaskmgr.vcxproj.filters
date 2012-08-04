@@ -10,6 +10,9 @@
     <Filter Include="Commun\System">
       <UniqueIdentifier>{25fc1863-9206-4ad1-91df-530a55c0b612}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Commun\Texte">
+      <UniqueIdentifier>{aded5a5b-2206-4ae0-ab67-b4b157f86965}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="KiwiTaskmgr.cpp" />
@@ -24,6 +27,9 @@
     </ClCompile>
     <ClCompile Include="..\..\modules\mod_system.cpp">
       <Filter>Commun\System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\modules\mod_text.cpp">
+      <Filter>Commun\Texte</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="..\..\modules\mod_system.h">
       <Filter>Commun\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\modules\mod_text.h">
+      <Filter>Commun\Texte</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

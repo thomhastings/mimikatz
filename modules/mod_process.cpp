@@ -4,7 +4,7 @@
 	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
 */
 #include "mod_process.h"
-
+#include <iostream>
 bool mod_process::getList(vector<KIWI_PROCESSENTRY32> * maProcessesvector, wstring * processName)
 {
 	HANDLE hProcessesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -162,7 +162,7 @@ bool mod_process::suspend(DWORD & processId)
 		HANDLE monHandle = OpenProcess(PROCESS_SUSPEND_RESUME, false, processId);
 		if(reussite = (monHandle && monHandle != INVALID_HANDLE_VALUE))
 		{
-			reussite = (NtSuspendProcess(monHandle) == STATUS_SUCCESS);
+			reussite = NT_SUCCESS(NtSuspendProcess(monHandle));
 			CloseHandle(monHandle);
 		}
 	}
@@ -178,7 +178,7 @@ bool mod_process::resume(DWORD & processId)
 		HANDLE monHandle = OpenProcess(PROCESS_SUSPEND_RESUME, false, processId);
 		if(reussite = (monHandle && monHandle != INVALID_HANDLE_VALUE))
 		{
-			reussite = (NtResumeProcess(monHandle) == STATUS_SUCCESS);
+			reussite = NT_SUCCESS(NtResumeProcess(monHandle));
 			CloseHandle(monHandle);
 		}
 	}
@@ -213,7 +213,7 @@ bool mod_process::getProcessBasicInformation(PROCESS_BASIC_INFORMATION * mesInfo
 	if(PNT_QUERY_INFORMATION_PROCESS NtQueryInformationProcess = reinterpret_cast<PNT_QUERY_INFORMATION_PROCESS>(GetProcAddress(GetModuleHandle(L"ntdll"), "NtQueryInformationProcess")))
 	{
 		ULONG sizeReturn;
-		reussite = (NtQueryInformationProcess(processHandle, ProcessBasicInformation, mesInfos, sizeof(PROCESS_BASIC_INFORMATION), &sizeReturn) == 0) && (sizeReturn == sizeof(PROCESS_BASIC_INFORMATION));
+		reussite = NT_SUCCESS(NtQueryInformationProcess(processHandle, ProcessBasicInformation, mesInfos, sizeof(PROCESS_BASIC_INFORMATION), &sizeReturn)) && (sizeReturn == sizeof(PROCESS_BASIC_INFORMATION));
 	}
 	return reussite;
 }
@@ -405,4 +405,55 @@ bool mod_process::getProcessEntryFromProcessId(DWORD processId, KIWI_PROCESSENTR
 	}
 
 	return reussite;
+}
+
+
+bool mod_process::getVeryBasicModulesListForProcess(vector<KIWI_VERY_BASIC_MODULEENTRY> * monModuleVector, HANDLE processHandle)
+{
+	bool reussite = false;
+	PEB * monPeb = new PEB();
+	if(getPeb(monPeb, processHandle))
+	{
+		PEB_LDR_DATA * monLoader = new PEB_LDR_DATA();
+		if(mod_memory::readMemory(monPeb->LoaderData, monLoader, sizeof(PEB_LDR_DATA), processHandle))
+		{
+			PBYTE aLire, fin;
+			LDR_DATA_TABLE_ENTRY monEntry;
+			for(
+				aLire = PBYTE(monLoader->InMemoryOrderModulevector.Flink) - FIELD_OFFSET(LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks),
+				fin = (PBYTE) (monPeb->LoaderData) + FIELD_OFFSET(PEB_LDR_DATA, InLoadOrderModulevector);
+			aLire != fin;
+			aLire = (PBYTE) monEntry.InMemoryOrderLinks.Flink - FIELD_OFFSET(LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks)
+				)
+			{
+				if(reussite = mod_memory::readMemory(aLire, &monEntry, sizeof(monEntry), processHandle))
+				{
+					KIWI_VERY_BASIC_MODULEENTRY monModule = {
+						reinterpret_cast<PBYTE>(monEntry.DllBase),
+						monEntry.SizeOfImage,
+						getUnicodeStringOfProcess(&monEntry.BaseDllName, processHandle)
+					};
+					monModuleVector->push_back(monModule);
+				}
+			}
+		}
+		delete monLoader;
+	}
+	delete monPeb;
+	return reussite;
+}
+
+wstring mod_process::getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDLE process)
+{
+	wstring maChaine;
+	if(ptrString->Buffer && (ptrString->Length > 0))
+	{
+		BYTE * monBuffer = new BYTE[ptrString->MaximumLength];
+		if(mod_memory::readMemory(ptrString->Buffer, monBuffer, ptrString->MaximumLength, process))
+		{
+			maChaine.assign(mod_text::stringOrHex(reinterpret_cast<PBYTE>(monBuffer), ptrString->Length));
+		}
+		delete[] monBuffer;
+	}
+	return maChaine;
 }

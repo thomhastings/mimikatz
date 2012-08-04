@@ -5,7 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #include "wdigest.h"
-mod_process::PKIWI_MODULEENTRY32 mod_mimikatz_sekurlsa_wdigest::pModWDIGEST = NULL;
+mod_process::PKIWI_VERY_BASIC_MODULEENTRY mod_mimikatz_sekurlsa_wdigest::pModWDIGEST = NULL;
 mod_mimikatz_sekurlsa_wdigest::PKIWI_WDIGEST_LIST_ENTRY mod_mimikatz_sekurlsa_wdigest::l_LogSessList = NULL; //reinterpret_cast<mod_mimikatz_sekurlsa_wdigest::PKIWI_WDIGEST_LIST_ENTRY>(NULL);
 long mod_mimikatz_sekurlsa_wdigest::offsetWDigestPrimary = 0;
 

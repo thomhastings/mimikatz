@@ -38,7 +38,7 @@ private:
 	static bool searchLiveGlobalLogonSessionList();
 
 public:
-	static mod_process::PKIWI_MODULEENTRY32 pModLIVESSP;
+	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModLIVESSP;
 	static bool getLiveSSP(vector<wstring> * arguments);
 	static bool WINAPI getLiveSSPLogonData(__in PLUID logId, __in bool justSecurity);
 };

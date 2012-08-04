@@ -14,6 +14,9 @@
     <ClCompile Include="..\..\modules\mod_system.cpp">
       <Filter>Commun\System</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\modules\mod_text.cpp">
+      <Filter>Commun\Texte</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KiwiCmd.rc" />
@@ -27,6 +30,9 @@
     </Filter>
     <Filter Include="Commun\System">
       <UniqueIdentifier>{ffd94b79-2018-4ff5-9924-420def9644a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commun\Texte">
+      <UniqueIdentifier>{bf647d7e-ebee-487f-b8cf-21285ae2fadd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="..\..\modules\mod_system.h">
       <Filter>Commun\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\modules\mod_text.h">
+      <Filter>Commun\Texte</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

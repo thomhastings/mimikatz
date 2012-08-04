@@ -42,7 +42,7 @@ private:
 	static bool searchTSPKGFuncs();
 
 public:
-	static mod_process::PKIWI_MODULEENTRY32 pModTSPKG;
+	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModTSPKG;
 	static bool getTsPkg(vector<wstring> * arguments);
 	static bool WINAPI getTsPkgLogonData(__in PLUID logId, __in bool justSecurity);
 };

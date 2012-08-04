@@ -14,6 +14,9 @@
     <ClCompile Include="..\..\modules\mod_system.cpp">
       <Filter>Commun\System</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\modules\mod_text.cpp">
+      <Filter>Commun\Texte</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="KiwiRegedit.rc" />
@@ -27,6 +30,9 @@
     </Filter>
     <Filter Include="Commun\System">
       <UniqueIdentifier>{f6044443-2221-4e54-873d-b02b776ff415}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Commun\Texte">
+      <UniqueIdentifier>{1038e0a7-1287-4feb-8604-bfd172dfb459}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -44,6 +50,9 @@
     </ClInclude>
     <ClInclude Include="..\..\modules\mod_system.h">
       <Filter>Commun\System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\modules\mod_text.h">
+      <Filter>Commun\Texte</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

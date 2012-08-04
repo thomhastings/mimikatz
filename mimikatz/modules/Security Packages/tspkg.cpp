@@ -5,7 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #include "tspkg.h"
-mod_process::PKIWI_MODULEENTRY32 mod_mimikatz_sekurlsa_tspkg::pModTSPKG = NULL;
+mod_process::PKIWI_VERY_BASIC_MODULEENTRY mod_mimikatz_sekurlsa_tspkg::pModTSPKG = NULL;
 PRTL_AVL_TABLE mod_mimikatz_sekurlsa_tspkg::TSGlobalCredTable = NULL; //reinterpret_cast<PRTL_AVL_TABLE>(NULL);
 
 bool mod_mimikatz_sekurlsa_tspkg::getTsPkg(vector<wstring> * arguments)

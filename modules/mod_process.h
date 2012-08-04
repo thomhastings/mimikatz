@@ -5,8 +5,10 @@
 */
 #pragma once
 #include "globdefs.h"
+#include "secpkg.h"
 #include "mod_ntddk.h"
 #include "mod_memory.h"
+#include "mod_text.h"
 #include <security.h>
 #include <tlhelp32.h>
 
@@ -49,6 +51,13 @@ public:
 		wstring	szExePath;
 	} KIWI_MODULEENTRY32, *PKIWI_MODULEENTRY32;
 
+	typedef struct _KIWI_VERY_BASIC_MODULEENTRY
+	{
+		BYTE  * modBaseAddr;        // Base address of module in th32ProcessID's context
+		DWORD   modBaseSize;        // Size in bytes of module starting at modBaseAddr
+		wstring	szModule;
+	} KIWI_VERY_BASIC_MODULEENTRY, *PKIWI_VERY_BASIC_MODULEENTRY;
+
 	static bool getList(vector<KIWI_PROCESSENTRY32> * maProcessesvector, wstring * processName = NULL);
 	static bool getUniqueForName(KIWI_PROCESSENTRY32 * monProcess, wstring * processName);
 
@@ -61,6 +70,7 @@ public:
 
 	static bool getAuthentificationIdFromProcessId(DWORD & processId, LUID & AuthentificationId);
 	static bool getModulesListForProcessId(vector<KIWI_MODULEENTRY32> * maModulevector, DWORD * processId = NULL);
+	static bool getVeryBasicModulesListForProcess(vector<KIWI_VERY_BASIC_MODULEENTRY> * monModuleVector, HANDLE processHandle = INVALID_HANDLE_VALUE);
 	static bool getUniqueModuleForName(KIWI_MODULEENTRY32 * monModule, wstring * moduleName = NULL, DWORD * processId = NULL); 
 
 	static bool getProcessEntryFromProcessId(DWORD processId, KIWI_PROCESSENTRY32 * processKiwi, vector<mod_process::KIWI_PROCESSENTRY32> * mesProcess = NULL);
@@ -68,4 +78,6 @@ public:
 	static bool getProcessBasicInformation(PROCESS_BASIC_INFORMATION * mesInfos, HANDLE processHandle = INVALID_HANDLE_VALUE);
 	static bool getPeb(PEB * peb, HANDLE processHandle = INVALID_HANDLE_VALUE);
 	static bool getIAT(PBYTE ptrBaseAddr, vector<pair<string, vector<KIWI_IAT_MODULE>>> * monIAT, HANDLE handleProcess = INVALID_HANDLE_VALUE);
+
+	static wstring getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDLE process = INVALID_HANDLE_VALUE);
 };

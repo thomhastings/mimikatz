@@ -64,7 +64,7 @@ private:
 	static bool searchKerberosFuncs();
 
 public:
-	static mod_process::PKIWI_MODULEENTRY32 pModKERBEROS;
+	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModKERBEROS;
 	static bool getKerberos(vector<wstring> * arguments);
 	static bool WINAPI getKerberosLogonData(__in PLUID logId, __in bool justSecurity);
 };
