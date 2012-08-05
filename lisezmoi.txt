@@ -16,6 +16,21 @@ http://blog.gentilkiwi.com/mimikatz
 benjamin@gentilkiwi.com
 
 
+anti-gpo standalone
+===================
+
+Ces outils ont étés remplacé par l'utilisation directe de mimikatz
+
+* KiwiRegedit
+	mimikatz nogpo::regedit exit
+
+* KiwiCmd
+	mimikatz nogpo::cmd exit
+
+* KiwiRegedit
+	mimikatz nogpo::taskmgr exit
+
+
 outils incorporés
 =================
 

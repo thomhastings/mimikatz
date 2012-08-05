@@ -13,13 +13,33 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klock", "librairies\klock\k
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kappfree", "kappfree\kappfree.vcxproj", "{E7A85049-E31E-4575-B6A0-E6F1EAA9EEB0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Anti-GPO StandAlone", "Anti-GPO StandAlone", "{3E1F995E-A702-4F89-8682-6734FB7DEBA9}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7999D050-6332-45F7-A343-C343902B1453}"
+	ProjectSection(SolutionItems) = preProject
+		lisezmoi.src.txt = lisezmoi.src.txt
+		lisezmoi.txt = lisezmoi.txt
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KiwiCmd", "antigpo_standalone\KiwiCmd\KiwiCmd.vcxproj", "{B3ABAC45-C0F3-4E45-9A30-124F68B6CA93}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "En-têtes", "En-têtes", "{24371643-CEFE-4590-BB29-6141CB5E25D1}"
+	ProjectSection(SolutionItems) = preProject
+		commun\globdefs.h = commun\globdefs.h
+		commun\secpkg.h = commun\secpkg.h
+	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KiwiRegedit", "antigpo_standalone\KiwiRegedit\KiwiRegedit.vcxproj", "{C237FC4A-DAE3-4052-9348-4D38128F3736}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "KiwiTaskmgr", "antigpo_standalone\KiwiTaskmgr\KiwiTaskmgr.vcxproj", "{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Icons", "Icons", "{80532836-DE52-40AD-B373-E4098BF52E1F}"
+	ProjectSection(SolutionItems) = preProject
+		commun\icons\cmd_32.ico = commun\icons\cmd_32.ico
+		commun\icons\cmd_48.ico = commun\icons\cmd_48.ico
+		commun\icons\cmd_kiwi.ico = commun\icons\cmd_kiwi.ico
+		commun\icons\mimikatz_bird.ico = commun\icons\mimikatz_bird.ico
+		commun\icons\mimikatz_fruit.ico = commun\icons\mimikatz_fruit.ico
+		commun\icons\mimikatz_fruit_16.ico = commun\icons\mimikatz_fruit_16.ico
+		commun\icons\regedit_32.ico = commun\icons\regedit_32.ico
+		commun\icons\regedit_48.ico = commun\icons\regedit_48.ico
+		commun\icons\regedit_kiwi.ico = commun\icons\regedit_kiwi.ico
+		commun\icons\taskmgr_32.ico = commun\icons\taskmgr_32.ico
+		commun\icons\taskmgr_48.ico = commun\icons\taskmgr_48.ico
+		commun\icons\taskmgr_kiwi.ico = commun\icons\taskmgr_kiwi.ico
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
@@ -51,18 +71,6 @@ Global
 		{E7A85049-E31E-4575-B6A0-E6F1EAA9EEB0}.Release|Win32.Build.0 = Release|Win32
 		{E7A85049-E31E-4575-B6A0-E6F1EAA9EEB0}.Release|x64.ActiveCfg = Release|x64
 		{E7A85049-E31E-4575-B6A0-E6F1EAA9EEB0}.Release|x64.Build.0 = Release|x64
-		{B3ABAC45-C0F3-4E45-9A30-124F68B6CA93}.Release|Win32.ActiveCfg = Release|Win32
-		{B3ABAC45-C0F3-4E45-9A30-124F68B6CA93}.Release|Win32.Build.0 = Release|Win32
-		{B3ABAC45-C0F3-4E45-9A30-124F68B6CA93}.Release|x64.ActiveCfg = Release|x64
-		{B3ABAC45-C0F3-4E45-9A30-124F68B6CA93}.Release|x64.Build.0 = Release|x64
-		{C237FC4A-DAE3-4052-9348-4D38128F3736}.Release|Win32.ActiveCfg = Release|Win32
-		{C237FC4A-DAE3-4052-9348-4D38128F3736}.Release|Win32.Build.0 = Release|Win32
-		{C237FC4A-DAE3-4052-9348-4D38128F3736}.Release|x64.ActiveCfg = Release|x64
-		{C237FC4A-DAE3-4052-9348-4D38128F3736}.Release|x64.Build.0 = Release|x64
-		{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859}.Release|Win32.ActiveCfg = Release|Win32
-		{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859}.Release|Win32.Build.0 = Release|Win32
-		{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859}.Release|x64.ActiveCfg = Release|x64
-		{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,8 +80,7 @@ Global
 		{3A436EFD-4FD7-4E5F-B0EC-F9DCCACF1E60} = {B17EB705-1C68-44FD-A82B-860C539219A8}
 		{6556249E-1C80-4047-A863-F608C8B8AC55} = {B17EB705-1C68-44FD-A82B-860C539219A8}
 		{E7A85049-E31E-4575-B6A0-E6F1EAA9EEB0} = {B17EB705-1C68-44FD-A82B-860C539219A8}
-		{B3ABAC45-C0F3-4E45-9A30-124F68B6CA93} = {3E1F995E-A702-4F89-8682-6734FB7DEBA9}
-		{C237FC4A-DAE3-4052-9348-4D38128F3736} = {3E1F995E-A702-4F89-8682-6734FB7DEBA9}
-		{9DF5C150-31FB-4BD4-AD8F-0EB2BFA18859} = {3E1F995E-A702-4F89-8682-6734FB7DEBA9}
+		{24371643-CEFE-4590-BB29-6141CB5E25D1} = {7999D050-6332-45F7-A343-C343902B1453}
+		{80532836-DE52-40AD-B373-E4098BF52E1F} = {7999D050-6332-45F7-A343-C343902B1453}
 	EndGlobalSection
 EndGlobal

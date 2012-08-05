@@ -190,7 +190,6 @@
     <ClInclude Include="modules\mod_mimikatz_minesweeper.h">
       <Filter>Modules locaux pour mimikatz\Démineur</Filter>
     </ClInclude>
-    <ClInclude Include="..\commun\globdefs.h" />
     <ClInclude Include="modules\mod_mimikatz_sekurlsa.h">
       <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
     </ClInclude>
@@ -208,9 +207,6 @@
     </ClInclude>
     <ClInclude Include="modules\Security Packages\msv1_0.h">
       <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
-    </ClInclude>
-    <ClInclude Include="..\commun\secpkg.h">
-      <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

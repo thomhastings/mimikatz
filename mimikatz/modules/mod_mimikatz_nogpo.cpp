@@ -140,7 +140,7 @@ bool mod_mimikatz_nogpo::disableSimple(wstring commandLine, SIZE_T taillePattern
 		if(mod_process::getPeb(monPeb, mesInfos->hProcess))
 		{
 			PBYTE patternAddr = NULL;
-			// Ici NULL est "toléré", pas de moyen de connaitre la taille en mode USER :( (enfin pour le moment)
+			// Ici NULL est "toléré", pas de moyen simple de connaitre la taille en mode USER :( (enfin pour le moment)
 			if(mod_memory::searchMemory(reinterpret_cast<PBYTE>(monPeb->ImageBaseAddress), NULL, maCleDeDepart, &patternAddr, taillePattern, true, mesInfos->hProcess))
 			{
 				if(!(reussite = mod_memory::writeMemory(patternAddr, maCleFinale, taillePattern, mesInfos->hProcess)))
