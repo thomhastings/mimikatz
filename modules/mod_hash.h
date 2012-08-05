@@ -17,8 +17,6 @@ private:
 	static PRTL_INIT_UNICODESTRING RtlInitUnicodeString;
 	static PRTL_FREE_OEM_STRING RtlFreeOemString;
 
-	typedef BYTE DES_cblock[8];
-
 public:
 	typedef enum _KIWI_HASH_TYPE
 	{
@@ -76,9 +74,8 @@ public:
 
 	static void getBootKeyFromKey(BYTE bootkey[0x10], BYTE key[0x10]);
 	static bool getHbootKeyFromBootKeyAndF(BYTE hBootKey[0x10], BYTE bootKey[0x10], BYTE * AccountsF);
-	static bool decryptHash(wstring * hash, BYTE * hBootKey, USER_V * userV, SAM_ENTRY * encHash, unsigned long rid, bool isNtlm);
-	static void str_to_key(unsigned char *str,unsigned char *key);
-	static void sid_to_key1(unsigned long sid,unsigned char deskey[8]);
-	static void sid_to_key2(unsigned long sid,unsigned char deskey[8]);
-	static void des_set_odd_parity(DES_cblock * key);
+	static bool decryptHash(wstring * hash, BYTE * hBootKey, USER_V * userV, SAM_ENTRY * encHash, DWORD rid, bool isNtlm);
+	static void str_to_key(BYTE *str, BYTE *key);
+	static void sid_to_key1(DWORD sid, BYTE deskey[8]);
+	static void sid_to_key2(DWORD sid, BYTE deskey[8]);
 };
