@@ -4,7 +4,7 @@
 	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
 */
 #include "mod_process.h"
-#include <iostream>
+
 bool mod_process::getList(vector<KIWI_PROCESSENTRY32> * maProcessesvector, wstring * processName)
 {
 	HANDLE hProcessesSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
@@ -406,7 +406,6 @@ bool mod_process::getProcessEntryFromProcessId(DWORD processId, KIWI_PROCESSENTR
 
 	return reussite;
 }
-
 
 bool mod_process::getVeryBasicModulesListForProcess(vector<KIWI_VERY_BASIC_MODULEENTRY> * monModuleVector, HANDLE processHandle)
 {

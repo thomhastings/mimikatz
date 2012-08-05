@@ -46,7 +46,7 @@ NTSTATUS privProcesses(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_
 
 NTSTATUS listProcessesOrSysToken(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDestEnd, size_t *pcbRemaining, KIWI_EPROCESS_ACTION action)
 {
-	NTSTATUS status = STATUS_SUCCESS;
+	NTSTATUS status = STATUS_SUCCESS, status2 = STATUS_SUCCESS;
 	PEPROCESS monProcess = NULL;
 	PCHAR processName = NULL;
 	HANDLE processId = NULL;
@@ -79,17 +79,17 @@ NTSTATUS listProcessesOrSysToken(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDest
 								);
 				if(action == ExchangeToken)
 				{
-					status = ObOpenObjectByPointer(PsInitialSystemProcess, OBJ_KERNEL_HANDLE, NULL, GENERIC_READ, *PsProcessType, KernelMode, &sysProcessHandle);
-					if(NT_SUCCESS(status))
+					status2 = ObOpenObjectByPointer(PsInitialSystemProcess, OBJ_KERNEL_HANDLE, NULL, GENERIC_READ, *PsProcessType, KernelMode, &sysProcessHandle);
+					if(NT_SUCCESS(status2))
 					{
-						status = ObOpenObjectByPointer(monProcess, OBJ_KERNEL_HANDLE, NULL, GENERIC_WRITE, *PsProcessType, KernelMode, &processHandle);
-						if(NT_SUCCESS(status))
+						status2 = ObOpenObjectByPointer(monProcess, OBJ_KERNEL_HANDLE, NULL, GENERIC_WRITE, *PsProcessType, KernelMode, &processHandle);
+						if(NT_SUCCESS(status2))
 						{
-							status = ZwOpenProcessTokenEx(sysProcessHandle, TOKEN_DUPLICATE, OBJ_KERNEL_HANDLE, &sysProcessTokenHandle);
-							if(NT_SUCCESS(status))
+							status2 = ZwOpenProcessTokenEx(sysProcessHandle, TOKEN_DUPLICATE, OBJ_KERNEL_HANDLE, &sysProcessTokenHandle);
+							if(NT_SUCCESS(status2))
 							{
-								status = ZwDuplicateToken(sysProcessTokenHandle, TOKEN_ASSIGN_PRIMARY, NULL, FALSE, TokenPrimary, &newSysTokenHandle);
-								if(NT_SUCCESS(status))
+								status2 = ZwDuplicateToken(sysProcessTokenHandle, TOKEN_ASSIGN_PRIMARY, NULL, FALSE, TokenPrimary, &newSysTokenHandle);
+								if(NT_SUCCESS(status2))
 								{
 									ProcessTokenInformation.Token = newSysTokenHandle;
 									ProcessTokenInformation.Thread = 0;
@@ -100,10 +100,10 @@ NTSTATUS listProcessesOrSysToken(LPWSTR pszDest, size_t cbDest, LPWSTR *ppszDest
 										*pFlags2 &= ~TOKEN_FROZEN_MASK;
 									}
 									
-									status = ZwSetInformationProcess(processHandle, ProcessAccessToken, &ProcessTokenInformation, sizeof(PROCESS_ACCESS_TOKEN));
-									if(NT_SUCCESS(status))
+									status2 = ZwSetInformationProcess(processHandle, ProcessAccessToken, &ProcessTokenInformation, sizeof(PROCESS_ACCESS_TOKEN));
+									if(NT_SUCCESS(status2))
 									{
-										status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L"Token échangé :)\n");
+										status = RtlStringCbPrintfExW(*ppszDestEnd, *pcbRemaining, ppszDestEnd, pcbRemaining, STRSAFE_NO_TRUNCATION, L"\nToken échangé :)\n");
 									}
 									
 									if(INDEX_OS >= INDEX_VISTA)
