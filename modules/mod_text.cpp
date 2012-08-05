@@ -5,7 +5,7 @@
 */
 #include "mod_text.h"
 
-wstring mod_text::stringOfHex(BYTE monTab[], DWORD maTaille, DWORD longueur)
+wstring mod_text::stringOfHex(const BYTE monTab[], DWORD maTaille, DWORD longueur)
 {
 	wostringstream monStream;
 	for(DWORD j = 0; j < maTaille; j++)
@@ -21,14 +21,14 @@ wstring mod_text::stringOfHex(BYTE monTab[], DWORD maTaille, DWORD longueur)
 	return monStream.str();
 }
 
-wstring mod_text::stringOrHex(BYTE monTab[], DWORD maTaille, DWORD longueur)
+wstring mod_text::stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur)
 {
 	wstring result(L"<NULL>");
 	if(monTab && maTaille > 0)
 	{
 		if(IsTextUnicode(monTab, maTaille, NULL))
 		{
-			result.assign(reinterpret_cast<wchar_t *>(monTab), maTaille / sizeof(wchar_t));
+			result.assign(reinterpret_cast<const wchar_t *>(monTab), maTaille / sizeof(wchar_t));
 		}
 		else
 		{

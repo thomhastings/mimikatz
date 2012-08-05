@@ -6,6 +6,7 @@
 #pragma once
 #include "globdefs.h"
 #include "mod_text.h"
+#include "mod_crypto.h"
 
 class mod_hash
 {
@@ -18,19 +19,6 @@ private:
 
 	typedef BYTE DES_cblock[8];
 
-	typedef struct _RC4KEY_BLOB {
-		BLOBHEADER BlobHeader;
-		DWORD dwKeyLen;
-		BYTE Key[16];
-	} RC4KEY_BLOB;
-
-	typedef struct _DESKEY_BLOB {
-		BLOBHEADER BlobHeader;
-		DWORD dwKeyLen;
-		BYTE Key[8];
-	} DESKEY_BLOB;
-
-	static void RC4Crypt(BYTE * rc4_key, BYTE * ClearText, BYTE * EncryptBuffer);
 public:
 	typedef enum _KIWI_HASH_TYPE
 	{
@@ -48,7 +36,6 @@ public:
 		unsigned long LowPart;
 		long HighPart;
 	} OLD_LARGE_INTEGER, *POLD_LARGE_INTEGER;
-
 
 	typedef struct _USER_F { // http://www.beginningtoseethelight.org/ntsecurity/index.php#D3BC3F5643A17823
 		DWORD unk0_header;
@@ -88,7 +75,7 @@ public:
 	static bool ntlm(wstring * chaine, wstring * hash);
 
 	static void getBootKeyFromKey(BYTE bootkey[0x10], BYTE key[0x10]);
-	static bool getHbootKeyFromBootKeyAndF(BYTE hBootKey[0x20], BYTE bootKey[0x10], BYTE * AccountsF);
+	static bool getHbootKeyFromBootKeyAndF(BYTE hBootKey[0x10], BYTE bootKey[0x10], BYTE * AccountsF);
 	static bool decryptHash(wstring * hash, BYTE * hBootKey, USER_V * userV, SAM_ENTRY * encHash, unsigned long rid, bool isNtlm);
 	static void str_to_key(unsigned char *str,unsigned char *key);
 	static void sid_to_key1(unsigned long sid,unsigned char deskey[8]);

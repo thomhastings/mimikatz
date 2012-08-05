@@ -9,6 +9,7 @@
 #include "mod_patch.h"
 #include "mod_secacl.h"
 #include "mod_text.h"
+#include "mod_crypto.h"
 #include <iostream>
 #include <wincred.h>
 
@@ -22,6 +23,7 @@ public:
 	static bool eventdrop(vector<wstring> * arguments);
 	static bool secrets(vector<wstring> * arguments);
 	static bool nodetour(vector<wstring> * arguments);
+	static bool pitme(vector<wstring> * arguments);
 };
 
 

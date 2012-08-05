@@ -13,7 +13,7 @@ using namespace std;
 class mod_text
 {
 public:
-	static wstring stringOfHex(BYTE monTab[], DWORD maTaille, DWORD longueur = 0);
-	static wstring stringOrHex(BYTE monTab[], DWORD maTaille, DWORD longueur = 32);
+	static wstring stringOfHex(const BYTE monTab[], DWORD maTaille, DWORD longueur = 0);
+	static wstring stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur = 32);
 	static void wstringHexToByte(wstring &maChaine, BYTE monTab[]);
 };

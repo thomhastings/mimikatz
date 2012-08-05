@@ -28,10 +28,8 @@ bool mod_crypto::getSystemStoreFromString(wstring strSystemStore, DWORD * system
 			return true;
 		}
 	}
-
 	return false;
 }
-
 
 BOOL WINAPI mod_crypto::enumSysCallback(const void *pvSystemStore, DWORD dwFlags, PCERT_SYSTEM_STORE_INFO pStoreInfo, void *pvReserved, void *pvArg)
 {
@@ -69,17 +67,8 @@ bool mod_crypto::getKiwiKeyProvInfo(PCCERT_CONTEXT certCTX, KIWI_KEY_PROV_INFO *
 		if(reussite = (CertGetCertificateContextProperty(certCTX, CERT_KEY_PROV_INFO_PROP_ID, monBuffer, &taille) != 0))
 		{
 			CRYPT_KEY_PROV_INFO * mesInfos = reinterpret_cast<CRYPT_KEY_PROV_INFO *>(monBuffer);
-			
-			if(mesInfos->pwszProvName)
-				keyProvInfo->pwszProvName.assign(mesInfos->pwszProvName);
-			else
-				keyProvInfo->pwszProvName.assign(L"(null)");
-			
-			if(mesInfos->pwszContainerName)
-				keyProvInfo->pwszContainerName.assign(mesInfos->pwszContainerName);
-			else
-				keyProvInfo->pwszContainerName.assign(L"(null)");
-			
+			keyProvInfo->pwszProvName.assign(mesInfos->pwszProvName ? mesInfos->pwszProvName : L"(null)");
+			keyProvInfo->pwszContainerName.assign(mesInfos->pwszContainerName ? mesInfos->pwszContainerName : L"(null)");
 			keyProvInfo->cProvParam = mesInfos->cProvParam;
 			keyProvInfo->dwFlags = mesInfos->dwFlags;
 			keyProvInfo->dwKeySpec = mesInfos->dwKeySpec;
@@ -89,8 +78,6 @@ bool mod_crypto::getKiwiKeyProvInfo(PCCERT_CONTEXT certCTX, KIWI_KEY_PROV_INFO *
 	}
 	return reussite;
 }
-
-
 
 bool mod_crypto::CertCTXtoPFX(PCCERT_CONTEXT certCTX, wstring pfxFile, wstring password)
 {
@@ -175,4 +162,71 @@ bool mod_crypto::PrivateKeyBlobToPVK(BYTE * monExport, DWORD tailleExport, wstri
 	}
 
 	return retour;
+}
+
+bool mod_crypto::genericDecrypt(BYTE * data, SIZE_T dataSize, const BYTE * key, SIZE_T keySize, ALG_ID algorithme, BYTE * destBuffer, SIZE_T destBufferSize)
+{
+	bool retour = false;
+	HCRYPTPROV hCryptProv = NULL; 
+	HCRYPTKEY hKey = NULL;
+	PBYTE buffer = data;
+	DWORD dwWorkingBufferLength = dataSize;
+	
+	if(destBuffer && destBufferSize >= dataSize)
+	{
+		RtlCopyMemory(destBuffer, data, dataSize);
+		buffer = destBuffer;
+	}
+	
+	if((algorithme == CALG_RC4) && (keySize > 16))
+	{
+		fullRC4(buffer, dataSize, key, keySize);
+		retour = true;
+	}
+	else
+	{
+		if(CryptAcquireContext(&hCryptProv, NULL, NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+		{
+			GENERICKEY_BLOB myKeyHead = {{PLAINTEXTKEYBLOB, CUR_BLOB_VERSION, 0, algorithme}, keySize};
+			BYTE * myKey = new BYTE[sizeof(GENERICKEY_BLOB) + keySize];
+			RtlCopyMemory(myKey, &myKeyHead, sizeof(GENERICKEY_BLOB));
+			RtlCopyMemory(myKey + sizeof(GENERICKEY_BLOB), key, keySize);
+
+			if(CryptImportKey(hCryptProv, myKey, sizeof(GENERICKEY_BLOB) + keySize, 0, CRYPT_EXPORTABLE, &hKey))
+			{
+				if(CryptDecrypt(hKey, NULL, TRUE, 0, buffer, &dwWorkingBufferLength) || ((algorithme == CALG_DES) && (GetLastError() == NTE_BAD_DATA))) // évite les erreurs de parités http://support.microsoft.com/kb/331367/
+					retour = (dwWorkingBufferLength == dataSize);
+				CryptDestroyKey(hKey);
+			}
+			delete[] myKey;
+			CryptReleaseContext(hCryptProv, 0);
+		}
+	}
+	return retour;
+}
+
+void mod_crypto::fullRC4(BYTE * data, SIZE_T data_len, const BYTE * key, SIZE_T keylen) // pour les clés >= 128 bits (16 octets)
+{
+	ULONG i, j, k = 0, kpos = 0;
+	BYTE S[256], *pos = data;
+
+	for (i = 0; i < 256; i++)
+		S[i] = static_cast<BYTE>(i);
+
+	for (i = 0, j = 0; i < 256; i++)
+	{
+		j = (j + S[i] + key[kpos]) & 0xff;
+		kpos++;
+		if (kpos >= keylen)
+			kpos = 0;
+		S_SWAP(i, j);
+	}
+
+	for (i = 0, j = 0; k < data_len; k++)
+	{
+		i = (i + 1) & 0xff;
+		j = (j + S[i]) & 0xff;
+		S_SWAP(i, j);
+		*pos++ ^= S[(S[i] + S[j]) & 0xff];
+	}
 }

@@ -33,6 +33,8 @@ using namespace std;
 #define STATUS_INFO_LENGTH_MISMATCH	((NTSTATUS)0xc0000004L)
 #define STATUS_MORE_ENTRIES			((NTSTATUS)0x00000105L)
 
+#define S_SWAP(a, b) {BYTE t = S[a]; S[a] = S[b]; S[b] = t;}
+
 typedef bool (* PKIWI_LOCAL_COMMAND) (vector<wstring> * arguments);
 
 typedef struct _KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND {

@@ -20,8 +20,12 @@ public:
 		DWORD                   dwKeySpec;
 	} KIWI_KEY_PROV_INFO, *PKIWI_KEY_PROV_INFO;
 
-
 private:
+	typedef struct _GENERICKEY_BLOB {
+		BLOBHEADER BlobHeader;
+		DWORD dwKeyLen;
+	} GENERICKEY_BLOB, *PGENERICKEY_BLOB;
+
 	static BOOL WINAPI enumSysCallback(const void *pvSystemStore, DWORD dwFlags, PCERT_SYSTEM_STORE_INFO pStoreInfo, void *pvReserved, void *pvArg);
 public:
 	/*
@@ -47,4 +51,7 @@ public:
 	static bool	PrivateKeyBlobToPVK(BYTE * monExport, DWORD tailleExport, wstring pvkFile);
 	static bool CertCTXtoPFX(PCCERT_CONTEXT certCTX, wstring pfxFile, wstring password);
 	static bool CertCTXtoDER(PCCERT_CONTEXT certCTX, wstring DERFile);
+
+	static bool genericDecrypt(BYTE * data, SIZE_T data_len, const BYTE * key, SIZE_T keylen, ALG_ID algorithme, BYTE * destBuffer = NULL, SIZE_T destBufferSize = 0);
+	static void fullRC4(BYTE * data, SIZE_T data_len, const BYTE * key, SIZE_T keylen); // keysize >= 128 bits (16 bytes)
 };
