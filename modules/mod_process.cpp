@@ -442,7 +442,7 @@ bool mod_process::getVeryBasicModulesListForProcess(vector<KIWI_VERY_BASIC_MODUL
 	return reussite;
 }
 
-wstring mod_process::getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDLE process)
+wstring mod_process::getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDLE process, PLSA_PROTECT_MEMORY unProtectFunction)
 {
 	wstring maChaine;
 	if(ptrString->Buffer && (ptrString->Length > 0))
@@ -450,6 +450,8 @@ wstring mod_process::getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDL
 		BYTE * monBuffer = new BYTE[ptrString->MaximumLength];
 		if(mod_memory::readMemory(ptrString->Buffer, monBuffer, ptrString->MaximumLength, process))
 		{
+			if(unProtectFunction)
+				unProtectFunction(monBuffer, ptrString->MaximumLength);
 			maChaine.assign(mod_text::stringOrHex(reinterpret_cast<PBYTE>(monBuffer), ptrString->Length));
 		}
 		delete[] monBuffer;

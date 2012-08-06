@@ -25,20 +25,22 @@ public:
 private:
 	typedef struct _KIWI_BCRYPT_KEY_DATA {
 		DWORD size;
+		DWORD tag;
 		DWORD type;
-		PVOID unk0;
+		DWORD unk0;
 		DWORD unk1;
 		DWORD unk2;
 		DWORD unk3;
-		DWORD size1;
-		DWORD size2;	/* ... DATA*/
+		PVOID unk4;
+		BYTE data;
 	} KIWI_BCRYPT_KEY_DATA, *PKIWI_BCRYPT_KEY_DATA;
 
 	typedef struct _KIWI_BCRYPT_KEY {
 		DWORD size;
 		DWORD type;
-		PVOID unkCallbacks;
-		PKIWI_BCRYPT_KEY_DATA cle;	/* ... */
+		PVOID unk0;
+		PKIWI_BCRYPT_KEY_DATA cle;
+		PVOID unk1;
 	} KIWI_BCRYPT_KEY, *PKIWI_BCRYPT_KEY;
 
 	/* Crypto NT 5 */
@@ -58,7 +60,6 @@ public:
 	static PLIST_ENTRY getPtrFromLinkedListByLuid(PLIST_ENTRY pSecurityStruct, unsigned long LUIDoffset, PLUID luidToFind);
 	static PVOID getPtrFromAVLByLuid(PRTL_AVL_TABLE pTable, unsigned long LUIDoffset, PLUID luidToFind);
 
-	static wstring getUnicodeString(LSA_UNICODE_STRING * ptrString, bool isPassword = false);
 	static void genericCredsToStream(PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds, bool justSecurity, bool isTsPkg = false);
 	static bool	getLogonData(vector<wstring> * mesArguments, vector<pair<PFN_ENUM_BY_LUID, wstring>> * mesProviders);
 
