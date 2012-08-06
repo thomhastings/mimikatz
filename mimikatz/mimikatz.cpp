@@ -9,7 +9,8 @@ bool mimikatz::initLocalModules()
 {
 	mod_system::getVersion(&mod_system::GLOB_Version);
 	mod_mimikatz_sekurlsa::loadLsaSrv();
-	
+	mod_cryptoapi::loadRsaEnh();
+
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"",			L"Standard", mod_mimikatz_standard::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"crypto",		L"Cryptographie et certificats", mod_mimikatz_crypto::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"hash",		L"Hash", mod_mimikatz_hash::getMimiKatzCommands()));
@@ -63,6 +64,7 @@ mimikatz::mimikatz(vector<wstring> * mesArguments) : Kmimikatz(NULL)
 
 mimikatz::~mimikatz(void)
 {
+	mod_cryptoapi::unloadRsaEnh();
 	mod_mimikatz_sekurlsa::unloadLsaSrv();
 	mod_mimikatz_inject::closeThisCommunicator();
 }

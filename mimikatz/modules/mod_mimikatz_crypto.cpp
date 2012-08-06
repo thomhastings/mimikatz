@@ -144,7 +144,7 @@ void mod_mimikatz_crypto::listAndOrExportKeys(bool isMachine, bool exportKeys)
 					DWORD taille = sizeof(param);
 
 					if(CryptGetKeyParam(maCle, KP_PERMISSIONS, reinterpret_cast<BYTE *>(&param), &taille, NULL))
-						wcout << L"\t\tExportabilité : " << (param & CRYPT_EXPORT ? L"OUI" : L"NON") << endl;
+						wcout << L"\t\tExportabilité : " << (param & CRYPT_EXPORT ? L"OUI" : L"NON") << L" (" << hex << param << L")" << endl;
 					if(CryptGetKeyParam(maCle, KP_KEYLEN, reinterpret_cast<BYTE *>(&param), &taille, NULL))
 						wcout << L"\t\tTaille clé    : " << param << endl;
 
@@ -273,13 +273,28 @@ void mod_mimikatz_crypto::listAndOrExportCertificates(wstring monEmplacement, ws
 					{
 						wcout << L"\t\tContainer Clé : " << keyProvInfo.pwszContainerName << endl;
 						wcout << L"\t\tProvider      : " << keyProvInfo.pwszProvName << endl;
-
+						
 						HCRYPTPROV_OR_NCRYPT_KEY_HANDLE monProv = NULL;
 						DWORD keySpec = 0;
 						BOOL aFermer = false;
 						
 						if(CryptAcquireCertificatePrivateKey(pCertContext, CRYPT_ACQUIRE_ALLOW_NCRYPT_KEY_FLAG /* CRYPT_ACQUIRE_SILENT_FLAG NULL */, NULL, &monProv, &keySpec, &aFermer))
 						{
+							wostringstream keyType;
+							switch (keySpec)
+							{
+								case AT_KEYEXCHANGE:
+									keyType << L"AT_KEYEXCHANGE";
+									break;
+								case AT_SIGNATURE:
+									keyType << L"AT_SIGNATURE";
+									break;
+								default:
+									keyType << L"? (" << hex << keySpec << L")";
+							}
+							wcout << L"\t\tType          : " << keyType.str() << endl;
+
+							
 							DWORD size = 0;
 							bool exportable = false;
 

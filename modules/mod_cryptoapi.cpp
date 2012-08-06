@@ -4,6 +4,21 @@
 	Licence : http://creativecommons.org/licenses/by-nc-sa/3.0/fr/
 */
 #include "mod_cryptoapi.h"
+HMODULE mod_cryptoapi::hRsaEng = NULL;
+
+bool mod_cryptoapi::loadRsaEnh()
+{
+	if(!hRsaEng)
+		hRsaEng = LoadLibrary(L"rsaenh");
+	return (hRsaEng != NULL);
+}
+
+bool mod_cryptoapi::unloadRsaEnh()
+{
+	if(hRsaEng)
+		FreeLibrary(hRsaEng);
+	return true;
+}
 
 bool mod_cryptoapi::getVectorProviders(vector<wstring> * monVectorProviders)
 {

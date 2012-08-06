@@ -78,8 +78,9 @@ bool mod_mimikatz_sekurlsa::getLogonPasswords(vector<wstring> * arguments)
 
 bool mod_mimikatz_sekurlsa::loadLsaSrv()
 {
-	hLsaSrv = LoadLibrary(L"lsasrv");
-	return (hLsaSrv != NULL && hLsaSrv != INVALID_HANDLE_VALUE);
+	if(!hLsaSrv)
+		hLsaSrv = LoadLibrary(L"lsasrv");
+	return (hLsaSrv != NULL);
 }
 
 bool mod_mimikatz_sekurlsa::unloadLsaSrv()

@@ -11,6 +11,7 @@
 #include "mod_process.h"
 #include "mod_patch.h"
 #include <iostream>
+#include <sstream>
 
 class mod_mimikatz_crypto
 {
