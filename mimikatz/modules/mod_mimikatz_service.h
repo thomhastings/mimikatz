@@ -12,6 +12,8 @@
 class mod_mimikatz_service
 {
 private:
+	typedef bool (* PMOD_SERVICE_FUNC) (wstring * serviceName, wstring * machineName);
+	static bool genericFunction(PMOD_SERVICE_FUNC function, vector<wstring> * arguments);
 public:
 	static vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> getMimiKatzCommands();
 		

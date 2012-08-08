@@ -18,34 +18,35 @@ vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_service::getMimiKatzComm
 
 bool mod_mimikatz_service::start(vector<wstring> * arguments)
 {
-	wcout << L"Démarrage de \'" << arguments->front() << L"\' : ";
-	if(mod_service::start(&arguments->front()))
-		wcout << L"OK";
-	else
-		wcout << L"KO - mod_service::start ; " << mod_system::getWinError();
-	wcout << endl;
-	return true;
+	wcout << L"Démarrage de \'";
+	return genericFunction(mod_service::start, arguments);
 }
 
 bool mod_mimikatz_service::stop(vector<wstring> * arguments)
 {
-	wcout << L"Arrêt de \'" << arguments->front() << L"\' : ";
-	if(mod_service::stop(&arguments->front()))
-		wcout << L"OK";
-	else
-		wcout << L"KO - mod_service::stop ; " << mod_system::getWinError();
-	wcout << endl;
-	return true;
+	wcout << L"Arrêt de \'";
+	return genericFunction(mod_service::stop, arguments);
 }
 
 bool mod_mimikatz_service::remove(vector<wstring> * arguments)
 {
-	wcout << L"Suppression de \'" << arguments->front() << L"\' : ";
-	if(mod_service::remove(&arguments->front()))
-		wcout << L"OK";
-	else
-		wcout << L"KO - mod_service::remove ; " << mod_system::getWinError();
-	wcout << endl;
+	wcout << L"Suppression de \'";
+	return genericFunction(mod_service::remove, arguments);
+}
+
+bool mod_mimikatz_service::genericFunction(PMOD_SERVICE_FUNC function, vector<wstring> * arguments)
+{
+	if(!arguments->empty())
+	{
+		wcout << arguments->front() << L"\' : ";
+		if(function(&arguments->front(), NULL))
+			wcout << L"OK";
+		else
+			wcout << L"KO ; " << mod_system::getWinError();
+		wcout << endl;
+	}
+	else wcout << L"(null)\' - KO ; Nom de service manquant" << endl;
+
 	return true;
 }
 
