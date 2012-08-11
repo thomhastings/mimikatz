@@ -32,7 +32,7 @@ private:
 		DWORD unk2;
 		DWORD unk3;
 		PVOID unk4;
-		BYTE data;
+		BYTE data; /* etc... */
 	} KIWI_BCRYPT_KEY_DATA, *PKIWI_BCRYPT_KEY_DATA;
 
 	typedef struct _KIWI_BCRYPT_KEY {

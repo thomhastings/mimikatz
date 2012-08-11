@@ -98,10 +98,10 @@ bool WINAPI getKerberosLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in
 		PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds = NULL;
 		if(KerbGlobalLogonSessionTable)
 		{
-			KIWI_KERBEROS_LOGON_AVL_SEARCH maRecherche;
-			RtlZeroMemory(&maRecherche, sizeof(KIWI_KERBEROS_LOGON_AVL_SEARCH));
+			KIWI_KERBEROS_PRIMARY_CREDENTIAL maRecherche;
+			RtlZeroMemory(&maRecherche, sizeof(KIWI_KERBEROS_PRIMARY_CREDENTIAL));
 			maRecherche.LocallyUniqueIdentifier = *logId;
-			PKIWI_KERBEROS_LOGON_AVL_SEARCH ptrMaRecherche = &maRecherche;
+			PKIWI_KERBEROS_PRIMARY_CREDENTIAL ptrMaRecherche = &maRecherche;
 			if(PKIWI_KERBEROS_PRIMARY_CREDENTIAL * pLogSession = reinterpret_cast<PKIWI_KERBEROS_PRIMARY_CREDENTIAL *>(RtlLookupElementGenericTableAvl(KerbGlobalLogonSessionTable, &ptrMaRecherche)))
 			{
 				mesCreds = &(*pLogSession)->credentials;

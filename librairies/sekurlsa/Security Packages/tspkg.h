@@ -19,23 +19,12 @@ typedef struct _KIWI_TS_PRIMARY_CREDENTIAL {
 
 typedef struct _KIWI_TS_CREDENTIAL {
 #ifdef _M_X64
-	BYTE unk0[0x88];
-#elif defined _M_IX86
-	BYTE unk0[0x50];
-#endif
-	PKIWI_TS_PRIMARY_CREDENTIAL pTsPrimary;
-} KIWI_TS_CREDENTIAL, *PKIWI_TS_CREDENTIAL;
-
-typedef struct _KIWI_TS_CREDENTIAL_AVL_SEARCH {
-#ifdef _M_X64
 	BYTE unk0[108];
 #elif defined _M_IX86
 	BYTE unk0[64];
 #endif
 	LUID LocallyUniqueIdentifier;
-#ifdef _M_X64
-	BYTE unk1[46];
-#elif defined _M_IX86
-	BYTE unk1[16];
-#endif
-} KIWI_TS_CREDENTIAL_AVL_SEARCH, *PKIWI_TS_CREDENTIAL_AVL_SEARCH;
+	PVOID unk1;
+	PVOID unk2;
+	PKIWI_TS_PRIMARY_CREDENTIAL pTsPrimary;
+} KIWI_TS_CREDENTIAL, *PKIWI_TS_CREDENTIAL;

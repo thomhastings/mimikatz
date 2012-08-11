@@ -54,7 +54,7 @@ NTSTATUS getKeServiceDescriptorTable()
 {
 	NTSTATUS retour = STATUS_NOT_FOUND;
 	
-	UCHAR ptrn[] = {0x00, 0x00, 0x4D, 0x0F, 0x45, 0xD3, 0x42, 0x3B, 0x44, 0x17, 0x10, 0x0F, 0x83};
+	UCHAR ptrn[] = {0x00, 0x00, 0x4d, 0x0f, 0x45, 0xd3, 0x42, 0x3b, 0x44, 0x17, 0x10, 0x0f, 0x83};
 	LONG offsetToKe = -19;
 	SIZE_T sizePtrn = sizeof(ptrn);
 
@@ -62,6 +62,9 @@ NTSTATUS getKeServiceDescriptorTable()
 	PLONG offset;
 	UNICODE_STRING maRoutine;
 	PVOID baseSearch = NULL;
+	
+	if(INDEX_OS >= INDEX_8)
+		offsetToKe += 3;
 		
 	if(KeServiceDescriptorTable)
 	{
@@ -74,14 +77,12 @@ NTSTATUS getKeServiceDescriptorTable()
 		
 		if(baseSearch)
 		{
-			KeServiceDescriptorTable = (PSERVICE_DESCRIPTOR_TABLE) 0xff;
-			for(i = 0; i < 16*1024; i++)
+			for(i = -21*1024; i < 16*1024; i++)
 			{
 				if(RtlCompareMemory(ptrn, (PUCHAR) (((ULONG_PTR) baseSearch) + i), sizePtrn) == sizePtrn)
 				{
 					offset = (PLONG) (((ULONG_PTR) baseSearch) + i + offsetToKe);
 					KeServiceDescriptorTable = (PSERVICE_DESCRIPTOR_TABLE) ((ULONG_PTR) offset + sizeof(LONG) + *offset);
-	
 					if(KeServiceDescriptorTable)
 					{
 						retour = STATUS_SUCCESS;

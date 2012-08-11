@@ -72,10 +72,10 @@ bool WINAPI getTsPkgLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in bo
 	if(searchTSPKGFuncs())
 	{
 		PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds = NULL;
-		KIWI_TS_CREDENTIAL_AVL_SEARCH maRecherche;
-		RtlZeroMemory(&maRecherche, sizeof(KIWI_TS_CREDENTIAL_AVL_SEARCH));
+		KIWI_TS_CREDENTIAL maRecherche;
+		RtlZeroMemory(&maRecherche, sizeof(KIWI_TS_CREDENTIAL));
 		maRecherche.LocallyUniqueIdentifier = *logId;
-		PKIWI_TS_CREDENTIAL_AVL_SEARCH ptrMaRecherche = &maRecherche;
+		PKIWI_TS_CREDENTIAL ptrMaRecherche = &maRecherche;
 		if(PKIWI_TS_CREDENTIAL * pLogSession = reinterpret_cast<PKIWI_TS_CREDENTIAL *>(RtlLookupElementGenericTableAvl(TSGlobalCredTable, &ptrMaRecherche)))
 		{
 			if((*pLogSession)->pTsPrimary)

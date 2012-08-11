@@ -125,6 +125,7 @@ ULONG getWindowsIndex()
 			break;
 		case 8102:
 		case 8250:
+		case 9200:
 			return INDEX_8;
 			break;
 		default:
