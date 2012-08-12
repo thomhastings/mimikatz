@@ -54,17 +54,13 @@ NTSTATUS getKeServiceDescriptorTable()
 {
 	NTSTATUS retour = STATUS_NOT_FOUND;
 	
-	UCHAR ptrn[] = {0x00, 0x00, 0x4d, 0x0f, 0x45, 0xd3, 0x42, 0x3b, 0x44, 0x17, 0x10, 0x0f, 0x83};
-	LONG offsetToKe = -19;
-	SIZE_T sizePtrn = sizeof(ptrn);
-
-	LONG i;
-	PLONG offset;
-	UNICODE_STRING maRoutine;
-	PVOID baseSearch = NULL;
+	UCHAR PTRN_WALL_Ke[]	= {0x00, 0x00, 0x4d, 0x0f, 0x45, 0xd3, 0x42, 0x3b, 0x44, 0x17, 0x10, 0x0f, 0x83};
+	LONG OFFS_WNO8_Ke		= -19;
+	LONG OFFS_WIN8_Ke		= -16;
 	
-	if(INDEX_OS >= INDEX_8)
-		offsetToKe += 3;
+	PUCHAR refDebut = NULL, refFin = NULL; LONG offsetTo = 0;
+	UNICODE_STRING maRoutine;
+	PUCHAR baseSearch = NULL;
 		
 	if(KeServiceDescriptorTable)
 	{
@@ -73,23 +69,13 @@ NTSTATUS getKeServiceDescriptorTable()
 	else
 	{	
 		RtlInitUnicodeString(&maRoutine, L"ZwUnloadKey");
-		baseSearch = MmGetSystemRoutineAddress(&maRoutine);
-		
-		if(baseSearch)
+		if(baseSearch = (PUCHAR) MmGetSystemRoutineAddress(&maRoutine))
 		{
-			for(i = -21*1024; i < 16*1024; i++)
-			{
-				if(RtlCompareMemory(ptrn, (PUCHAR) (((ULONG_PTR) baseSearch) + i), sizePtrn) == sizePtrn)
-				{
-					offset = (PLONG) (((ULONG_PTR) baseSearch) + i + offsetToKe);
-					KeServiceDescriptorTable = (PSERVICE_DESCRIPTOR_TABLE) ((ULONG_PTR) offset + sizeof(LONG) + *offset);
-					if(KeServiceDescriptorTable)
-					{
-						retour = STATUS_SUCCESS;
-					}
-					break;
-				}
-			}
+			refDebut= baseSearch - 21*PAGE_SIZE;
+			refFin	= baseSearch + 16*PAGE_SIZE;
+			offsetTo = (INDEX_OS < INDEX_8) ? OFFS_WNO8_Ke : OFFS_WIN8_Ke;
+
+			retour = genericPointerSearch((PUCHAR *) &KeServiceDescriptorTable, refDebut, refFin, PTRN_WALL_Ke, sizeof(PTRN_WALL_Ke), offsetTo);
 		}
 	}
 	return retour;

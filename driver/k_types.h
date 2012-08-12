@@ -5,7 +5,6 @@
 #define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 #define MAX(a, b)  (((a) > (b)) ? (a) : (b))
 
-
 #ifndef KIWI_NameToFunc
 #define KIWI_NameToFunc(Name, Function)	 if(taillFunc == sizeof(Name) - sizeof(WCHAR)) if(RtlCompareMemory(Name, buffer, taillFunc) == taillFunc) {*destFunc = Function; return STATUS_SUCCESS;}
 #endif
