@@ -213,104 +213,49 @@ bool mod_mimikatz_terminalserver::listAndOrModifySession(DWORD * id, DWORD * new
 
 bool mod_mimikatz_terminalserver::multirdp(vector<wstring> * arguments)
 {
-	/* Windows NT 5 (XP / 2003) x86 et x64
-	private: long __thiscall CRAPolicy::UseLicense(class CSession &)
-	{   
-	.text:760BB437                 cmp     eax, 2					83 f8 02	<= comparaison du nombre de sessions par rapport à 2 (après incrémentation)
-	.text:760BB43A                 jg      short @@loc_noLicence	7f xx		<= si supérieur, alors on va vers une erreur
-	<=>
-	.text:760BB43A                 nop								90
-	.text:760BB43B                 nop								90
-	} */
-	BYTE patternTestLicence5[]		= {0x83, 0xf8, 0x02, 0x7f};	// 83 f8 02 7f
-	BYTE patternNoTestLicence5[]	= {0x90, 0x90};
-	long offsetCibleTestLicence5	= 3;
+	BYTE PTRN_WIN5_TestLicence[]		= {0x83, 0xf8, 0x02, 0x7f};
+	BYTE PATC_WIN5_TestLicence[]		= {0x90, 0x90};
+	LONG OFFS_WIN5_TestLicence			= 3;
 #ifdef _M_X64
-	/* Windows NT 6.0 (Vista / 2008) x64
-
-	:(
-
-	*/
-	BYTE patternTestLicence60[]		= {0x8b, 0x81, 0x38, 0x06, 0x00, 0x00, 0x39, 0x81, 0x3c, 0x06, 0x00, 0x00, 0x75};	// 8b 81 38 06 00 00 39 81 3c 06 00 00 75
-	BYTE patternNoTestLicence60[]	= {0xc7, 0x81, 0x3c, 0x06, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x90, 0x90, 0xeb};
-	long offsetCibleTestLicence60	= 0;
-
-	/* Windows NT 6.1 (Seven / 2008r2) x64
-	public: virtual long CDefPolicy::Query(int *)
-	{
-	.text:000007FF75A97ACC                 mov     eax, [rdi+638h]					8b 87 38 06 00 00				<= nombre de sessions
-	.text:000007FF75A97AD2                 cmp     [rdi+63Ch], eax					39 87 3c 06 00 00				<= comparaison par rapport au maximum
-	.text:000007FF75A97AD8                 jz      @@loc_noLicence					0f 84 xx xx xx xx				<= si égal, on va vers un erreur
-	<=>
-	.text:000007FF75A97ACC                 mov     dword ptr [rdi+63Ch], 7FFFFFFFh	c7 87 3c 06 00 00 ff ff ff 7f	<= on remplace le nombre maximum (2) par 2 147 483 647 (ca devrait aller)
-	.text:000007FF75A97AD6                 nop*8									90
-	} */
-	// mettre un jmp short ?
-	BYTE patternTestLicence61[]		= {0x8b, 0x87, 0x38, 0x06, 0x00, 0x00, 0x39, 0x87, 0x3c, 0x06, 0x00, 0x00, 0x0f, 0x84};	// 8b 87 38 06 00 00 39 87 3c 06 00 00 0f 84
-	BYTE patternNoTestLicence61[]	= {0xc7, 0x87, 0x3c, 0x06, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-	long offsetCibleTestLicence61	= 0;
+	BYTE PTRN_WN60_Query__CDefPolicy[]	= {0x8b, 0x81, 0x38, 0x06, 0x00, 0x00, 0x39, 0x81, 0x3c, 0x06, 0x00, 0x00, 0x75};
+	BYTE PATC_WN60_Query__CDefPolicy[]	= {0xc7, 0x81, 0x3c, 0x06, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x90, 0x90, 0xeb};
+	BYTE PTRN_WN6x_Query__CDefPolicy[]	= {0x39, 0x87, 0x3c, 0x06, 0x00, 0x00, 0x0f, 0x84};
+	BYTE PATC_WN6x_Query__CDefPolicy[]	= {0xc7, 0x87, 0x3c, 0x06, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x90, 0x90};
 #elif defined _M_IX86
-	/* Windows NT 6.0 (Vista / 2008) x86
-
-	:(
-
-	*/
-	BYTE patternTestLicence60[]		= {0x8b, 0x91, 0x24, 0x03, 0x00, 0x00, 0x33, 0xc0, 0x3b, 0x91, 0x20, 0x03, 0x00, 0x00, 0x5e, 0x0f, 0x84};	// 8b 91 24 03 00 00 33 c0 3b 91 20 03 00 00 5e 0f 84
-	BYTE patternNoTestLicence60[]	= {0xc7, 0x81, 0x20, 0x03, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x33, 0xc0, 0x5e, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-	long offsetCibleTestLicence60	= 0;
-
-	/* Windows NT 6.1 (Seven) x86
-	public: virtual long CDefPolicy::Query(int *)
-	{
-	.text:6F2F9D4D                 mov     eax, [esi+324h]					8b 86 24 03 00 00				<= nombre de sessions
-	.text:6F2F9D53                 cmp     eax, [esi+320h]					3b 86 20 03 00 00				<= comparaison par rapport au maximum
-	.text:6F2F9D59                 jz      @@loc_noLicence					0f 84 xx xx xx xx				<= si égal, on va vers un erreur
-	<=>
-	.text:6F2F9D4D                 mov     dword ptr [esi+320h], 7FFFFFFFh	c7 86 20 03 00 00 ff ff ff 7f	<= on remplace le nombre maximum (2) par 2 147 483 647 (ca devrait aller)
-	.text:6F2F9D57                 nop*8									90
-	} */
-	// mettre un jmp short ?
-	BYTE patternTestLicence61[]		= {0x8b, 0x86, 0x24, 0x03, 0x00, 0x00, 0x3b, 0x86, 0x20, 0x03, 0x00, 0x00, 0x0f, 0x84};	// 8b 86 24 03 00 00 3b 86 20 03 00 00 0f 84
-	BYTE patternNoTestLicence61[]	= {0xc7, 0x86, 0x20, 0x03, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90};
-	long offsetCibleTestLicence61	= 0;
+	BYTE PTRN_WN60_Query__CDefPolicy[]	= {0x3b, 0x91, 0x20, 0x03, 0x00, 0x00, 0x5e, 0x0f, 0x84};
+	BYTE PATC_WN60_Query__CDefPolicy[]	= {0xc7, 0x81, 0x20, 0x03, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x5e, 0x90, 0x90};
+	BYTE PTRN_WN6x_Query__CDefPolicy[]	= {0x3b, 0x86, 0x20, 0x03, 0x00, 0x00, 0x0f, 0x84};
+	BYTE PATC_WN6x_Query__CDefPolicy[]	= {0xc7, 0x86, 0x20, 0x03, 0x00, 0x00, 0xff, 0xff, 0xff, 0x7f, 0x90, 0x90};
 #endif
-
-	BYTE * patternTestLicence	= NULL;	DWORD szPatternTestLicence	= 0;
-	BYTE * patternNoTestLicence	= NULL;	DWORD szPatternNoTestLicence= 0;
-	long offsetCibleTestLicence	= 0;
-
-	if(mod_system::GLOB_Version.dwMajorVersion == 5)
-	{
-		patternTestLicence = patternTestLicence5; szPatternTestLicence = sizeof(patternTestLicence5); 
-		patternNoTestLicence = patternNoTestLicence5; szPatternNoTestLicence = sizeof(patternNoTestLicence5);
-		offsetCibleTestLicence = offsetCibleTestLicence5;
-	}
-	else if(mod_system::GLOB_Version.dwMajorVersion == 6)
-	{
-		if(mod_system::GLOB_Version.dwMinorVersion == 0)
-		{
-			patternTestLicence = patternTestLicence60; szPatternTestLicence = sizeof(patternTestLicence60);
-			patternNoTestLicence = patternNoTestLicence60; szPatternNoTestLicence = sizeof(patternNoTestLicence60);
-			offsetCibleTestLicence = offsetCibleTestLicence60;
-		}
-		else if(mod_system::GLOB_Version.dwMinorVersion == 1)
-		{
-			patternTestLicence = patternTestLicence61; szPatternTestLicence = sizeof(patternTestLicence61);
-			patternNoTestLicence = patternNoTestLicence61; szPatternNoTestLicence = sizeof(patternNoTestLicence61);
-			offsetCibleTestLicence = offsetCibleTestLicence61;
-		}
-	}
-		
-	if(patternTestLicence && patternNoTestLicence)
-	{
-		mod_patch::patchModuleOfService(L"TermService", L"termsrv.dll", patternTestLicence, szPatternTestLicence, patternNoTestLicence, szPatternNoTestLicence, offsetCibleTestLicence);
-	}
-	else wcout << L"Impossible de choisir les patterns \'multirdp\' pour la version " << mod_system::GLOB_Version.dwMajorVersion << L'.' << mod_system::GLOB_Version.dwMinorVersion << endl;
+	LONG OFFS_WIN6_Query__CDefPolicy	= 0;
 	
+	BYTE * PTRN_Licence = NULL; DWORD SIZE_PTRN_Licence = 0;
+	BYTE * PATC_Licence = NULL; DWORD SIZE_PATC_Licence = 0;
+	LONG OFFS_PATC_Licence = 0;
+	if(mod_system::GLOB_Version.dwMajorVersion < 6)
+	{
+		PTRN_Licence = PTRN_WIN5_TestLicence; SIZE_PTRN_Licence = sizeof(PTRN_WIN5_TestLicence);
+		PATC_Licence = PATC_WIN5_TestLicence; SIZE_PATC_Licence = sizeof(PTRN_WIN5_TestLicence);
+		OFFS_PATC_Licence = OFFS_WIN5_TestLicence;
+	}
+	else
+	{
+		if(mod_system::GLOB_Version.dwMinorVersion < 1)
+		{
+			PTRN_Licence = PTRN_WN60_Query__CDefPolicy; SIZE_PTRN_Licence = sizeof(PTRN_WN60_Query__CDefPolicy);
+			PATC_Licence = PATC_WN60_Query__CDefPolicy; SIZE_PATC_Licence = sizeof(PATC_WN60_Query__CDefPolicy);
+		}
+		else
+		{
+			PTRN_Licence = PTRN_WN6x_Query__CDefPolicy; SIZE_PTRN_Licence = sizeof(PTRN_WN6x_Query__CDefPolicy);
+			PATC_Licence = PATC_WN6x_Query__CDefPolicy; SIZE_PATC_Licence = sizeof(PATC_WN6x_Query__CDefPolicy);
+		}
+		OFFS_PATC_Licence = OFFS_WIN6_Query__CDefPolicy;
+	}
+
+	mod_patch::patchModuleOfService(L"TermService", L"termsrv.dll", PTRN_Licence, SIZE_PTRN_Licence, PATC_Licence, SIZE_PATC_Licence, OFFS_PATC_Licence);
 	return true;
 }
-
-
 
 wstring mod_mimikatz_terminalserver::shadowToType(DWORD shadow)
 {
