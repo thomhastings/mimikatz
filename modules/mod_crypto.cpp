@@ -7,28 +7,23 @@
 
 bool mod_crypto::getSystemStoreFromString(wstring strSystemStore, DWORD * systemStore)
 {
-	vector<pair<wstring, DWORD>> mesEmplacements;
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_CURRENT_USER", CERT_SYSTEM_STORE_CURRENT_USER));
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY", CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY));
-	
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_LOCAL_MACHINE", CERT_SYSTEM_STORE_LOCAL_MACHINE));
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY", CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY));
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE", CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE));
-	
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_CURRENT_SERVICE", CERT_SYSTEM_STORE_CURRENT_SERVICE));
+	map<wstring, DWORD> mesEmplacements;
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_CURRENT_USER",					CERT_SYSTEM_STORE_CURRENT_USER));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY",	CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_LOCAL_MACHINE",				CERT_SYSTEM_STORE_LOCAL_MACHINE));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY",	CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE",		CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_CURRENT_SERVICE",				CERT_SYSTEM_STORE_CURRENT_SERVICE));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_USERS",						CERT_SYSTEM_STORE_USERS));
+	mesEmplacements.insert(make_pair(L"CERT_SYSTEM_STORE_SERVICES",						CERT_SYSTEM_STORE_SERVICES));
 
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_USERS", CERT_SYSTEM_STORE_USERS));
-	mesEmplacements.push_back(make_pair(L"CERT_SYSTEM_STORE_SERVICES", CERT_SYSTEM_STORE_SERVICES));
-
-	for(vector<pair<wstring, DWORD>>::iterator monEmplacement = mesEmplacements.begin(); monEmplacement != mesEmplacements.end(); monEmplacement++)
+	map<wstring, DWORD>::iterator monIterateur = mesEmplacements.find(strSystemStore);
+	if(monIterateur != mesEmplacements.end())
 	{
-		if(monEmplacement->first.compare(strSystemStore) == 0)
-		{
-			*systemStore = monEmplacement->second;
-			return true;
-		}
+		*systemStore = monIterateur->second;
+		return true;
 	}
-	return false;
+	else return false;
 }
 
 BOOL WINAPI mod_crypto::enumSysCallback(const void *pvSystemStore, DWORD dwFlags, PCERT_SYSTEM_STORE_INFO pStoreInfo, void *pvReserved, void *pvArg)

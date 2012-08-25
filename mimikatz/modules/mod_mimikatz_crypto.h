@@ -18,8 +18,8 @@ class mod_mimikatz_crypto
 private:
 	static void sanitizeFileName(wstring * fileName);
 	static bool isNT6;
-	static void listAndOrExportCertificates(wstring monEmplacement, wstring monStore, bool exportCert = false);
-	static void listAndOrExportKeys(bool isMachine = false, bool exportKeys = false);
+	static void listAndOrExportCertificates(vector<wstring> * arguments, bool exportCert = false);
+	static void listAndOrExportKeys(vector<wstring> * arguments, bool exportKeys = false);
 public:
 	static vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> getMimiKatzCommands();
 	

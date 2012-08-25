@@ -7,6 +7,7 @@
 #include "globdefs.h"
 #include <wincrypt.h>
 #include <sstream>
+#include <map>
 
 class mod_crypto
 {
@@ -28,20 +29,6 @@ private:
 
 	static BOOL WINAPI enumSysCallback(const void *pvSystemStore, DWORD dwFlags, PCERT_SYSTEM_STORE_INFO pStoreInfo, void *pvReserved, void *pvArg);
 public:
-	/*
-	CERT_SYSTEM_STORE_CURRENT_USER
-    CERT_SYSTEM_STORE_CURRENT_USER_GROUP_POLICY
-	
-	CERT_SYSTEM_STORE_LOCAL_MACHINE
-    CERT_SYSTEM_STORE_LOCAL_MACHINE_GROUP_POLICY
-    CERT_SYSTEM_STORE_LOCAL_MACHINE_ENTERPRISE
-
-	CERT_SYSTEM_STORE_CURRENT_SERVICE
-    
-	CERT_SYSTEM_STORE_USERS
-    CERT_SYSTEM_STORE_SERVICES
-    */
-
 	static bool getSystemStoreFromString(wstring strSystemStore, DWORD * systemStore);
 
 	static bool getVectorSystemStores(vector<wstring> * maSystemStoresvector, DWORD systemStore = CERT_SYSTEM_STORE_CURRENT_USER);
