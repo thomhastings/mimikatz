@@ -126,31 +126,38 @@ bool mod_crypto::CertCTXtoDER(PCCERT_CONTEXT certCTX, wstring DERFile)
 	return retour;
 }
 
+wstring mod_crypto::KeyTypeToString(DWORD keyType)
+{
+	wostringstream keyTypeStr;
+	switch (keyType)
+	{
+		case AT_KEYEXCHANGE:
+			keyTypeStr << L"AT_KEYEXCHANGE";
+			break;
+		case AT_SIGNATURE:
+			keyTypeStr << L"AT_SIGNATURE";
+			break;
+		default:
+			keyTypeStr << L"? (" << hex << keyType << L")";
+	}
+	return keyTypeStr.str();
+}
 
-bool mod_crypto::PrivateKeyBlobToPVK(BYTE * monExport, DWORD tailleExport, wstring pvkFile)
+
+bool mod_crypto::PrivateKeyBlobToPVK(BYTE * monExport, DWORD tailleExport, wstring pvkFile, DWORD keySpec)
 {
 	bool retour = false;
-
-	BYTE monHead[] = {
-		0x1e, 0xf1, 0xb5, 0xb0,				// magic
-		0x00, 0x00, 0x00, 0x00,				// reserved
-		AT_KEYEXCHANGE, 0x00, 0x00, 0x00,	// keytype
-		0x00, 0x00, 0x00, 0x00,				// encrypted
-		0x00, 0x00, 0x00, 0x00				// saltlen
-	};
+	FILE_HDR monHeader = {PVK_MAGIC, PVK_FILE_VERSION_0, keySpec, PVK_NO_ENCRYPT, 0, tailleExport};
 
 	HANDLE hFile = CreateFile(pvkFile.c_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, 0, NULL);
 	if(hFile && hFile != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwBytesWritten;
-		if(WriteFile(hFile, monHead, sizeof(monHead), &dwBytesWritten, NULL) && sizeof(monHead) == dwBytesWritten)
+		if(WriteFile(hFile, &monHeader, sizeof(monHeader), &dwBytesWritten, NULL) && sizeof(monHeader) == dwBytesWritten)
 		{
-			if(WriteFile(hFile, &tailleExport, sizeof(tailleExport), &dwBytesWritten, NULL) && sizeof(tailleExport) == dwBytesWritten)
+			if(WriteFile(hFile, monExport, tailleExport, &dwBytesWritten, NULL) && tailleExport == dwBytesWritten)
 			{
-				if(WriteFile(hFile, monExport, tailleExport, &dwBytesWritten, NULL) && tailleExport == dwBytesWritten)
-				{
-					retour = FlushFileBuffers(hFile) != 0;
-				}
+				retour = FlushFileBuffers(hFile) != 0;
 			}
 		}
 		CloseHandle(hFile);

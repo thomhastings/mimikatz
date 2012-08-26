@@ -139,6 +139,7 @@ void mod_mimikatz_crypto::listAndOrExportKeys(vector<wstring> * arguments, bool 
 				{
 					if(CryptGetUserKey(hCryptKeyProv, ks, &maCle))
 					{
+						wcout << L"\t\tType          : " << mod_crypto::KeyTypeToString(ks) << endl;
 						DWORD param = 0, taille = sizeof(param);
 						if(CryptGetKeyParam(maCle, KP_PERMISSIONS, reinterpret_cast<BYTE *>(&param), &taille, NULL))
 							wcout << L"\t\tExportabilité : " << (param & CRYPT_EXPORT ? L"OUI" : L"NON") << endl;
@@ -159,7 +160,7 @@ void mod_mimikatz_crypto::listAndOrExportKeys(vector<wstring> * arguments, bool 
 						
 							if(mod_cryptoapi::getPrivateKey(maCle, &monExport, &tailleExport))
 							{
-								reussite = mod_crypto::PrivateKeyBlobToPVK(monExport, tailleExport, monBuff.str());
+								reussite = mod_crypto::PrivateKeyBlobToPVK(monExport, tailleExport, monBuff.str(), ks);
 								delete[] monExport;
 							}
 
@@ -294,20 +295,7 @@ void mod_mimikatz_crypto::listAndOrExportCertificates(vector<wstring> * argument
 						
 						if(CryptAcquireCertificatePrivateKey(pCertContext, CRYPT_ACQUIRE_ALLOW_NCRYPT_KEY_FLAG /* CRYPT_ACQUIRE_SILENT_FLAG NULL */, NULL, &monProv, &keySpec, &aFermer))
 						{
-							wostringstream keyType;
-							switch (keySpec)
-							{
-								case AT_KEYEXCHANGE:
-									keyType << L"AT_KEYEXCHANGE";
-									break;
-								case AT_SIGNATURE:
-									keyType << L"AT_SIGNATURE";
-									break;
-								default:
-									keyType << L"? (" << hex << keySpec << L")";
-							}
-							wcout << L"\t\tType          : " << keyType.str() << endl;
-
+							wcout << L"\t\tType          : " << mod_crypto::KeyTypeToString(keySpec) << endl;
 							
 							DWORD size = 0;
 							bool exportable = false;
