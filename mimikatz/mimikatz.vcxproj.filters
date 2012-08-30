@@ -208,6 +208,9 @@
     <ClInclude Include="modules\Security Packages\msv1_0.h">
       <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
     </ClInclude>
+    <ClInclude Include="modules\mod_mimikatz_efs.h">
+      <Filter>Modules locaux pour mimikatz\Certificats &amp; Clés</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -337,6 +340,9 @@
     </ClCompile>
     <ClCompile Include="modules\mod_mimikatz_process.cpp">
       <Filter>Modules locaux pour mimikatz\System</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\mod_mimikatz_efs.cpp">
+      <Filter>Modules locaux pour mimikatz\Certificats &amp; Clés</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -136,6 +136,7 @@
     <ClInclude Include="mimikatz.h" />
     <ClInclude Include="modules\mod_mimikatz_crypto.h" />
     <ClInclude Include="modules\mod_mimikatz_divers.h" />
+    <ClInclude Include="modules\mod_mimikatz_efs.h" />
     <ClInclude Include="modules\mod_mimikatz_handle.h" />
     <ClInclude Include="modules\mod_mimikatz_hash.h" />
     <ClInclude Include="modules\mod_mimikatz_inject.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="mimikatz.cpp" />
     <ClCompile Include="modules\mod_mimikatz_crypto.cpp" />
     <ClCompile Include="modules\mod_mimikatz_divers.cpp" />
+    <ClCompile Include="modules\mod_mimikatz_efs.cpp" />
     <ClCompile Include="modules\mod_mimikatz_handle.cpp" />
     <ClCompile Include="modules\mod_mimikatz_hash.cpp" />
     <ClCompile Include="modules\mod_mimikatz_inject.cpp" />

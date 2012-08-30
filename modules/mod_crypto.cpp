@@ -93,7 +93,7 @@ bool mod_crypto::CertCTXtoPFX(PCCERT_CONTEXT certCTX, wstring pfxFile, wstring p
 				if(hFile && hFile != INVALID_HANDLE_VALUE)
 				{
 					DWORD dwBytesWritten;
-					if(WriteFile(hFile, bDataBlob.pbData, bDataBlob.cbData, &dwBytesWritten, NULL) && bDataBlob.cbData == dwBytesWritten)
+					if(WriteFile(hFile, bDataBlob.pbData, bDataBlob.cbData, &dwBytesWritten, NULL) && (bDataBlob.cbData == dwBytesWritten))
 					{
 						retour = FlushFileBuffers(hFile) != 0;
 					}
@@ -153,9 +153,9 @@ bool mod_crypto::PrivateKeyBlobToPVK(BYTE * monExport, DWORD tailleExport, wstri
 	if(hFile && hFile != INVALID_HANDLE_VALUE)
 	{
 		DWORD dwBytesWritten;
-		if(WriteFile(hFile, &monHeader, sizeof(monHeader), &dwBytesWritten, NULL) && sizeof(monHeader) == dwBytesWritten)
+		if(WriteFile(hFile, &monHeader, sizeof(monHeader), &dwBytesWritten, NULL) && (sizeof(monHeader) == dwBytesWritten))
 		{
-			if(WriteFile(hFile, monExport, tailleExport, &dwBytesWritten, NULL) && tailleExport == dwBytesWritten)
+			if(WriteFile(hFile, monExport, tailleExport, &dwBytesWritten, NULL) && (tailleExport == dwBytesWritten))
 			{
 				retour = FlushFileBuffers(hFile) != 0;
 			}

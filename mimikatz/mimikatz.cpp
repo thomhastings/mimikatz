@@ -29,6 +29,7 @@ bool mimikatz::initLocalModules()
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"ts",			L"Terminal Server", mod_mimikatz_terminalserver::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"divers",		L"Fonctions diverses n\'ayant pas encore assez de corps pour avoir leurs propres module", mod_mimikatz_divers::getMimiKatzCommands()));
 	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"sekurlsa",	L"Dump des sessions courantes par providers LSASS", mod_mimikatz_sekurlsa::getMimiKatzCommands()));
+	mesModules.push_back(KIWI_MIMIKATZ_LOCAL_MODULE(L"efs",			L"Manipulations EFS", mod_mimikatz_efs::getMimiKatzCommands()));
 	return true;
 }
 

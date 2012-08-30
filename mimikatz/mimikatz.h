@@ -28,6 +28,7 @@
 #include "modules/mod_mimikatz_divers.h"
 #include "modules/mod_mimikatz_impersonate.h"
 #include "modules/mod_mimikatz_sekurlsa.h"
+#include "modules/mod_mimikatz_efs.h"
 
 class mimikatz
 {

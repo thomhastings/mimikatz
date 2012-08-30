@@ -107,6 +107,29 @@ bool mod_secacl::sidToName(PSID Sid, wstring * strName, wstring * domainName, ws
 	return reussite;
 }
 
+bool mod_secacl::simpleSidToString(PSID Sid, wstring * String)
+{
+	wstring userName;
+	wstring domaineName;
+	String->clear();
+
+	if(Sid)
+	{
+		if(mod_secacl::sidToName(Sid, &userName, &domaineName))
+		{
+			String->assign(domaineName);
+			String->push_back(L'\\');
+			String->append(userName);
+		}
+		else
+			mod_secacl::sidToStrSid(Sid, String);
+	}
+	if(String->empty())
+		String->assign(L"(null)");
+
+	return true;
+}
+
 bool mod_secacl::tokenUser(HANDLE tokenHandle, wstring * strName, wstring * domainName, wstring * systemName, SID_NAME_USE * usage)
 {
 	bool reussite = false;

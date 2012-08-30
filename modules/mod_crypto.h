@@ -19,12 +19,12 @@ class mod_crypto
 {
 public:
 	typedef struct _KIWI_KEY_PROV_INFO {
-		std::wstring            pwszContainerName;
-		std::wstring            pwszProvName;
-		DWORD                   dwProvType;
-		DWORD                   dwFlags;
-		DWORD                   cProvParam;
-		DWORD                   dwKeySpec;
+		std::wstring	pwszContainerName;
+		std::wstring	pwszProvName;
+		DWORD			dwProvType;
+		DWORD			dwFlags;
+		DWORD			cProvParam;
+		DWORD			dwKeySpec;
 	} KIWI_KEY_PROV_INFO, *PKIWI_KEY_PROV_INFO;
 
 private:
@@ -33,14 +33,14 @@ private:
 		DWORD dwKeyLen;
 	} GENERICKEY_BLOB, *PGENERICKEY_BLOB;
 
-	typedef struct _FILE_HDR {   
-    DWORD               dwMagic;   
-    DWORD               dwVersion;   
-    DWORD               dwKeySpec;   
-    DWORD               dwEncryptType;   
-    DWORD               cbEncryptData;   
-    DWORD               cbPvk;   
-} FILE_HDR, *PFILE_HDR;   
+	typedef struct _FILE_HDR {
+		DWORD	dwMagic;
+		DWORD	dwVersion;
+		DWORD	dwKeySpec;
+		DWORD	dwEncryptType;
+		DWORD	cbEncryptData;
+		DWORD	cbPvk;
+	} FILE_HDR, *PFILE_HDR;
 
 	static BOOL WINAPI enumSysCallback(const void *pvSystemStore, DWORD dwFlags, PCERT_SYSTEM_STORE_INFO pStoreInfo, void *pvReserved, void *pvArg);
 public:
