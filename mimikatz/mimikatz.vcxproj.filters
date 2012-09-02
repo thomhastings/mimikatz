@@ -211,6 +211,9 @@
     <ClInclude Include="modules\mod_mimikatz_efs.h">
       <Filter>Modules locaux pour mimikatz\Certificats &amp; Clés</Filter>
     </ClInclude>
+    <ClInclude Include="..\modules\mod_minidump.h">
+      <Filter>Modules Communs\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -343,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="modules\mod_mimikatz_efs.cpp">
       <Filter>Modules locaux pour mimikatz\Certificats &amp; Clés</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\mod_minidump.cpp">
+      <Filter>Modules Communs\System</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

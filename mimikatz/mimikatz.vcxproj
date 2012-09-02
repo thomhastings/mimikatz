@@ -120,6 +120,7 @@
     <ClInclude Include="..\modules\mod_hive.h" />
     <ClInclude Include="..\modules\mod_inject.h" />
     <ClInclude Include="..\modules\mod_memory.h" />
+    <ClInclude Include="..\modules\mod_minidump.h" />
     <ClInclude Include="..\modules\mod_ntddk.h" />
     <ClInclude Include="..\modules\mod_parseur.h" />
     <ClInclude Include="..\modules\mod_patch.h" />
@@ -167,6 +168,7 @@
     <ClCompile Include="..\modules\mod_hive.cpp" />
     <ClCompile Include="..\modules\mod_inject.cpp" />
     <ClCompile Include="..\modules\mod_memory.cpp" />
+    <ClCompile Include="..\modules\mod_minidump.cpp" />
     <ClCompile Include="..\modules\mod_parseur.cpp" />
     <ClCompile Include="..\modules\mod_patch.cpp" />
     <ClCompile Include="..\modules\mod_pipe.cpp" />

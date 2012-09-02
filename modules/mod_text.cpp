@@ -51,3 +51,21 @@ void mod_text::wstringHexToByte(wstring &maChaine, BYTE monTab[])
 		monTab[i] = temp;
 	}
 }
+
+
+bool mod_text::wstr_ends_with(const wchar_t * str, const wchar_t * suffix)
+{
+	if(str && suffix)
+	{
+		size_t str_len = wcslen(str), suffix_len = wcslen(suffix);
+		return wstr_ends_with(str, str_len, suffix, suffix_len);
+	}
+	return false;
+}
+
+bool mod_text::wstr_ends_with(const wchar_t * str, size_t str_len, const wchar_t * suffix, size_t suffix_len)
+{
+	if(str && suffix && (suffix_len <= str_len))
+		return (_wcsnicmp(str + str_len - suffix_len, suffix, suffix_len) == 0);
+	return false;
+}
