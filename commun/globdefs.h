@@ -78,6 +78,14 @@ typedef SECURITY_STATUS	(WINAPI * PNCRYPT_FREE_BUFFER)				(__deref PVOID pvInput
 typedef SECURITY_STATUS	(WINAPI * PNCRYPT_FREE_OBJECT)				(__in NCRYPT_HANDLE hObject);
 typedef NTSTATUS		(WINAPI * PBCRYPT_ENUM_REGISTERED_PROVIDERS)(__inout ULONG* pcbBuffer, __deref_opt_inout_bcount_part_opt(*pcbBuffer, *pcbBuffer) PCRYPT_PROVIDERS *ppBuffer);
 typedef VOID			(WINAPI * PBCRYPT_FREE_BUFFER)				(__in PVOID pvBuffer);
+
+typedef NTSTATUS		(WINAPI * PBCRYPT_OPEN_ALGORITHM_PROVIDER)	(__out BCRYPT_ALG_HANDLE  *phAlgorithm, __in LPCWSTR pszAlgId, __in_opt LPCWSTR pszImplementation, __in ULONG dwFlags);
+typedef NTSTATUS		(WINAPI * PBCRYPT_SET_PROPERTY)				(__inout BCRYPT_HANDLE hObject, __in LPCWSTR pszProperty, __in_bcount(cbInput) PUCHAR pbInput, __in ULONG cbInput, __in ULONG dwFlags);
+typedef NTSTATUS		(WINAPI * PBCRYPT_GET_PROPERTY)				(__in BCRYPT_HANDLE hObject, __in LPCWSTR pszProperty, __out_bcount_part_opt(cbOutput, *pcbResult) PUCHAR pbOutput, __in ULONG cbOutput, __out ULONG *pcbResult, __in ULONG dwFlags);
+typedef NTSTATUS		(WINAPI * PBCRYPT_GENERATE_SYMMETRIC_KEY)	(__inout BCRYPT_ALG_HANDLE hAlgorithm, __out BCRYPT_KEY_HANDLE *phKey, __out_bcount_full_opt(cbKeyObject) PUCHAR pbKeyObject, __in ULONG cbKeyObject, __in_bcount(cbSecret) PUCHAR pbSecret, __in ULONG cbSecret, __in ULONG dwFlags);
+typedef NTSTATUS		(WINAPI * PBCRYTP_DESTROY_KEY)				(__inout BCRYPT_KEY_HANDLE hKey);
+typedef NTSTATUS		(WINAPI * PBCRYTP_CLOSE_ALGORITHM_PROVIDER)	(__inout BCRYPT_ALG_HANDLE hAlgorithm, __in ULONG dwFlags);
+
 /* Rtl* */
 #define RtlEqualLuid(L1, L2) (((L1)->LowPart == (L2)->LowPart) && ((L1)->HighPart == (L2)->HighPart))
 typedef NTSTATUS		(WINAPI * PRTL_CREATE_USER_THREAD)						(__in HANDLE Process, __in_opt PSECURITY_DESCRIPTOR ThreadSecurityDescriptor, __in char Flags, __in_opt ULONG ZeroBits, __in_opt SIZE_T MaximumStackSize, __in_opt SIZE_T CommittedStackSize, __in PTHREAD_START_ROUTINE StartAddress, __in_opt PVOID Parameter, __out_opt PHANDLE Thread, __out_opt PCLIENT_ID ClientId);
