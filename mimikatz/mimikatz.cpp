@@ -61,6 +61,7 @@ mimikatz::mimikatz(vector<wstring> * mesArguments) : Kmimikatz(NULL)
 		} while(tryToDispatch(monBuffer));
 		delete monBuffer;
 	}
+	wcout.flush();
 }
 
 mimikatz::~mimikatz(void)

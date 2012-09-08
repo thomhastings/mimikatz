@@ -6,6 +6,7 @@
 #pragma once
 #include "globdefs.h"
 #include <iostream>
+#include <sstream>
 
 class mod_mimikatz_standard
 {
@@ -17,5 +18,6 @@ public:
 	static bool cite(vector<wstring> * arguments);
 	static bool reponse(vector<wstring> * arguments);
 	static bool version(vector<wstring> * arguments);
+	static bool sleep(vector<wstring> * arguments);
 	static bool test(vector<wstring> * arguments);
 };
