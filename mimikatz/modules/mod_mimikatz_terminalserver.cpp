@@ -235,7 +235,7 @@ bool mod_mimikatz_terminalserver::multirdp(vector<wstring> * arguments)
 	if(mod_system::GLOB_Version.dwMajorVersion < 6)
 	{
 		PTRN_Licence = PTRN_WIN5_TestLicence; SIZE_PTRN_Licence = sizeof(PTRN_WIN5_TestLicence);
-		PATC_Licence = PATC_WIN5_TestLicence; SIZE_PATC_Licence = sizeof(PTRN_WIN5_TestLicence);
+		PATC_Licence = PATC_WIN5_TestLicence; SIZE_PATC_Licence = sizeof(PATC_WIN5_TestLicence);
 		OFFS_PATC_Licence = OFFS_WIN5_TestLicence;
 	}
 	else
