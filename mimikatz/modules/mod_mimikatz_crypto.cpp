@@ -5,8 +5,6 @@
 */
 #include "mod_mimikatz_crypto.h"
 
-bool mod_mimikatz_crypto::isNT6 = GetProcAddress(GetModuleHandle(L"ntdll"), "NtCreateThreadEx") != NULL;
-
 vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_crypto::getMimiKatzCommands()
 {
 	vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> monVector;
@@ -258,8 +256,7 @@ void mod_mimikatz_crypto::listAndOrExportCertificates(vector<wstring> * argument
 		monEmplacement = arguments->front();
 		monStore = arguments->back();
 	}
-
-
+	
 	wcout << L"Emplacement : \'" << monEmplacement << L'\'';
 
 	DWORD systemStore;
