@@ -17,6 +17,9 @@ public:
 	static wstring stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur = 32);
 	static void wstringHexToByte(wstring &maChaine, BYTE monTab[]);
 	
+	static wstring stringOfSTRING(UNICODE_STRING maString);
+	static string stringOfSTRING(STRING maString);
+
 	static bool wstr_ends_with(const wchar_t * str, const wchar_t * suffix);
 	static bool wstr_ends_with(const wchar_t * str, size_t str_len, const wchar_t * suffix, size_t suffix_len);
 };

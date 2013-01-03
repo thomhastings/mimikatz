@@ -69,3 +69,12 @@ bool mod_text::wstr_ends_with(const wchar_t * str, size_t str_len, const wchar_t
 		return (_wcsnicmp(str + str_len - suffix_len, suffix, suffix_len) == 0);
 	return false;
 }
+
+wstring mod_text::stringOfSTRING(UNICODE_STRING maString)
+{
+	return wstring(maString.Buffer, maString.Length / sizeof(wchar_t));
+}
+string mod_text::stringOfSTRING(STRING maString)
+{
+	return string(maString.Buffer, maString.Length);
+}

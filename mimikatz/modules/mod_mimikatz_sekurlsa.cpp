@@ -458,15 +458,11 @@ bool mod_mimikatz_sekurlsa::getLogonData(vector<wstring> * mesArguments, vector<
 			{
 				if(sessionData->LogonType != Network)
 				{
-					wstring username(sessionData->UserName.Buffer, sessionData->UserName.Length / sizeof(wchar_t));
-					wstring package(sessionData->AuthenticationPackage.Buffer, sessionData->AuthenticationPackage.Length / sizeof(wchar_t));
-					wstring domain(sessionData->LogonDomain.Buffer, sessionData->LogonDomain.Length / sizeof(wchar_t));
-
 					wcout << endl <<
 						L"Authentification Id         : " << sessions[i].HighPart << L";" << sessions[i].LowPart << endl <<
-						L"Package d\'authentification  : " << package << endl <<
-						L"Utilisateur principal       : " << username << endl <<
-						L"Domaine d\'authentification  : " << domain << endl;
+						L"Package d\'authentification  : " << mod_text::stringOfSTRING(sessionData->AuthenticationPackage) << endl <<
+						L"Utilisateur principal       : " << mod_text::stringOfSTRING(sessionData->UserName) << endl <<
+						L"Domaine d\'authentification  : " << mod_text::stringOfSTRING(sessionData->LogonDomain) << endl;
 
 					for(vector<pair<PFN_ENUM_BY_LUID, wstring>>::iterator monProvider = mesProviders->begin(); monProvider != mesProviders->end(); monProvider++)
 					{

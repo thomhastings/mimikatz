@@ -116,7 +116,7 @@ __kextdll bool __cdecl getLocalAccounts(mod_pipe * monPipe, vector<wstring> * me
 				{
 					if(NT_SUCCESS(SamrOpenDomain(handleSam, DOMAIN_ALL_ACCESS, ptrPolicyDomainInfo->DomainSid, &handleDomain)))
 					{
-						wstring domainName(ptrPolicyDomainInfo->DomainName.Buffer, ptrPolicyDomainInfo->DomainName.Length / sizeof(wchar_t));
+						wstring domainName = mod_text::stringOfSTRING(ptrPolicyDomainInfo->DomainName);
 						do
 						{
 							retourEnum = SamrEnumerateUsersInDomain(handleDomain, &EnumerationContext, NULL, &ptrStructEnumUser, 1000, &EnumerationSize);
@@ -124,7 +124,7 @@ __kextdll bool __cdecl getLocalAccounts(mod_pipe * monPipe, vector<wstring> * me
 							{
 								for(DWORD numUser = 0; numUser < ptrStructEnumUser->EntriesRead && sendOk; numUser++)
 								{
-									wstring monUserName(ptrStructEnumUser->Buffer[numUser].Name.Buffer, ptrStructEnumUser->Buffer[numUser].Name.Length / sizeof(wchar_t));
+									wstring monUserName = mod_text::stringOfSTRING(ptrStructEnumUser->Buffer[numUser].Name);
 									ptrMesInfosUsers = NULL;
 
 									if(NT_SUCCESS(SamrOpenUser(handleDomain, USER_ALL_ACCESS, ptrStructEnumUser->Buffer[numUser].RelativeId, &handleUser)))
@@ -133,10 +133,10 @@ __kextdll bool __cdecl getLocalAccounts(mod_pipe * monPipe, vector<wstring> * me
 										{
 											WUserAllInformation mesInfos = UserInformationsToStruct(monType, ptrMesInfosUsers);
 											mesInfos.UserId = ptrStructEnumUser->Buffer[numUser].RelativeId;
-											mesInfos.DomaineName.assign(ptrPolicyDomainInfo->DomainName.Buffer, ptrPolicyDomainInfo->DomainName.Length / sizeof(wchar_t));
+											mesInfos.DomaineName = mod_text::stringOfSTRING(ptrPolicyDomainInfo->DomainName);
 
 											if(mesInfos.UserName.empty())
-												mesInfos.UserName.assign(ptrStructEnumUser->Buffer[numUser].Name.Buffer, ptrStructEnumUser->Buffer[numUser].Name.Length / sizeof(wchar_t));
+												mesInfos.UserName = mod_text::stringOfSTRING(ptrStructEnumUser->Buffer[numUser].Name);
 
 											sendOk = descrToPipeInformations(monPipe, monType, mesInfos, isCSV);
 											SamIFree_SAMPR_USER_INFO_BUFFER(ptrMesInfosUsers, monType);
@@ -312,9 +312,9 @@ WUserAllInformation UserInformationsToStruct(USER_INFORMATION_CLASS type, PSAMPR
 		ptrAllInformations = reinterpret_cast<PSAMPR_USER_ALL_INFORMATION>(monPtr);
 
 		mesInfos.UserId = ptrAllInformations->UserId;
-		mesInfos.UserName.assign(ptrAllInformations->UserName.Buffer, ptrAllInformations->UserName.Length / sizeof(wchar_t));
-		mesInfos.FullName.assign(ptrAllInformations->FullName.Buffer, ptrAllInformations->FullName.Length / sizeof(wchar_t));
-		correctMe(mesInfos.FullName);
+		mesInfos.UserName = mod_text::stringOfSTRING(ptrAllInformations->UserName);
+		mesInfos.FullName = mod_text::stringOfSTRING(ptrAllInformations->FullName); correctMe(mesInfos.FullName);
+		
 		mesInfos.isActif = (ptrAllInformations->UserAccountControl & USER_ACCOUNT_DISABLED) == 0;
 		mesInfos.isLocked = (ptrAllInformations->UserAccountControl & USER_ACCOUNT_AUTO_LOCKED) != 0;
 
@@ -327,15 +327,15 @@ WUserAllInformation UserInformationsToStruct(USER_INFORMATION_CLASS type, PSAMPR
 		else
 			mesInfos.TypeCompte.assign(L"Inconnu");
 
-		mesInfos.UserComment.assign(ptrAllInformations->UserComment.Buffer, ptrAllInformations->UserComment.Length / sizeof(wchar_t)); correctMe(mesInfos.UserComment);
-		mesInfos.AdminComment.assign(ptrAllInformations->AdminComment.Buffer, ptrAllInformations->AdminComment.Length / sizeof(wchar_t)); correctMe(mesInfos.AdminComment);
+		mesInfos.UserComment = mod_text::stringOfSTRING(ptrAllInformations->UserComment); correctMe(mesInfos.AdminComment);
+		mesInfos.AdminComment = mod_text::stringOfSTRING(ptrAllInformations->AdminComment); correctMe(mesInfos.AdminComment);
 		mesInfos.AccountExpires = toTimeFromOLD_LARGE_INTEGER(ptrAllInformations->AccountExpires);
 		mesInfos.AccountExpires_strict = toTimeFromOLD_LARGE_INTEGER(ptrAllInformations->AccountExpires, true);
-		mesInfos.WorkStations.assign(ptrAllInformations->WorkStations.Buffer, ptrAllInformations->WorkStations.Length / sizeof(wchar_t));
-		mesInfos.HomeDirectory.assign(ptrAllInformations->HomeDirectory.Buffer, ptrAllInformations->HomeDirectory.Length / sizeof(wchar_t)); correctMe(mesInfos.HomeDirectory);
-		mesInfos.HomeDirectoryDrive.assign(ptrAllInformations->HomeDirectoryDrive.Buffer, ptrAllInformations->HomeDirectoryDrive.Length / sizeof(wchar_t)); correctMe(mesInfos.HomeDirectoryDrive);
-		mesInfos.ProfilePath.assign(ptrAllInformations->ProfilePath.Buffer, ptrAllInformations->ProfilePath.Length / sizeof(wchar_t)); correctMe(mesInfos.ProfilePath);
-		mesInfos.ScriptPath.assign(ptrAllInformations->ScriptPath.Buffer, ptrAllInformations->ScriptPath.Length / sizeof(wchar_t)); correctMe(mesInfos.ScriptPath);
+		mesInfos.WorkStations = mod_text::stringOfSTRING(ptrAllInformations->WorkStations);
+		mesInfos.HomeDirectory = mod_text::stringOfSTRING(ptrAllInformations->HomeDirectory); correctMe(mesInfos.HomeDirectory);
+		mesInfos.HomeDirectoryDrive = mod_text::stringOfSTRING(ptrAllInformations->HomeDirectoryDrive); correctMe(mesInfos.HomeDirectoryDrive);
+		mesInfos.ProfilePath = mod_text::stringOfSTRING(ptrAllInformations->ProfilePath); correctMe(mesInfos.ProfilePath);
+		mesInfos.ScriptPath = mod_text::stringOfSTRING(ptrAllInformations->ScriptPath); correctMe(mesInfos.ScriptPath);
 		mesInfos.LogonCount = ptrAllInformations->LogonCount;
 		mesInfos.BadPasswordCount = ptrAllInformations->BadPasswordCount;
 		mesInfos.LastLogon = toTimeFromOLD_LARGE_INTEGER(ptrAllInformations->LastLogon);

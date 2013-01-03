@@ -49,11 +49,9 @@ bool WINAPI getMSVLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in bool
 				maReponse << L"lm{ " << lmHash << L" }, ntlm{ " << ntHash << L" }";
 			else
 			{
-				wstring userName(kiwiCreds->UserName.Buffer, kiwiCreds->UserName.Length / sizeof(wchar_t));
-				wstring domainName(kiwiCreds->LogonDomainName.Buffer, kiwiCreds->LogonDomainName.Length / sizeof(wchar_t));
 				maReponse << endl <<
-					L"\t * Utilisateur  : " << userName << endl <<
-					L"\t * Domaine      : " << domainName << endl <<
+					L"\t * Utilisateur  : " << mod_text::stringOfSTRING(kiwiCreds->UserName) << endl <<
+					L"\t * Domaine      : " << mod_text::stringOfSTRING(kiwiCreds->LogonDomainName) << endl <<
 					L"\t * Hash LM      : " << lmHash << endl <<
 					L"\t * Hash NTLM    : " << ntHash;
 			}

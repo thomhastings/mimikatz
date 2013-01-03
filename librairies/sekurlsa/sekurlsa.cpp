@@ -64,8 +64,8 @@ void genericCredsToStream(wostringstream * monStream, PKIWI_GENERIC_PRIMARY_CRED
 			*monStream << password;
 		else
 		{
-			wstring userName(mesCreds->UserName.Buffer, mesCreds->UserName.Length / sizeof(wchar_t));
-			wstring domainName(mesCreds->Domaine.Buffer, mesCreds->Domaine.Length / sizeof(wchar_t));
+			wstring userName = mod_text::stringOfSTRING(mesCreds->UserName);
+			wstring domainName = mod_text::stringOfSTRING(mesCreds->Domaine);
 			*monStream <<  endl <<
 					L"\t * Utilisateur  : " << (isTsPkg ? domainName : userName) << endl <<
 					L"\t * Domaine      : " << (isTsPkg ? userName : domainName) << endl <<
@@ -108,16 +108,12 @@ bool getLogonData(mod_pipe * monPipe, vector<wstring> * mesArguments, vector<pai
 			{
 				if(sessionData->LogonType != Network)
 				{
-					wstring username(sessionData->UserName.Buffer, sessionData->UserName.Length / sizeof(wchar_t));
-					wstring package(sessionData->AuthenticationPackage.Buffer, sessionData->AuthenticationPackage.Length / sizeof(wchar_t));
-					wstring domain(sessionData->LogonDomain.Buffer, sessionData->LogonDomain.Length / sizeof(wchar_t));
-				
 					wostringstream maPremiereReponse;
 					maPremiereReponse << endl <<
 						L"Authentification Id         : " << sessions[i].HighPart << L";" << sessions[i].LowPart << endl <<
-						L"Package d\'authentification  : " << package << endl <<
-						L"Utilisateur principal       : " << username << endl <<
-						L"Domaine d\'authentification  : " << domain << endl;
+						L"Package d\'authentification  : " << mod_text::stringOfSTRING(sessionData->AuthenticationPackage) << endl <<
+						L"Utilisateur principal       : " << mod_text::stringOfSTRING(sessionData->UserName) << endl <<
+						L"Domaine d\'authentification  : " << mod_text::stringOfSTRING(sessionData->LogonDomain) << endl;
 
 					sendOk = sendTo(monPipe, maPremiereReponse.str());
 

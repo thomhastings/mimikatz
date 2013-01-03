@@ -62,7 +62,7 @@ __kextdll bool __cdecl getSecrets(mod_pipe * monPipe, vector<wstring> * mesArgum
 						if(RegEnumKeyEx(hKeysSecrets, i, monNomSecret.Buffer, &buffsize, NULL, NULL, NULL, NULL) == ERROR_SUCCESS)
 						{
 							monNomSecret.Length = monNomSecret.MaximumLength = static_cast<USHORT>(buffsize * sizeof(wchar_t));
-							message.assign(L"\nSecret     : "); message.append(monNomSecret.Buffer, monNomSecret.Length / sizeof(wchar_t)); message.push_back(L'\n');
+							message.assign(L"\nSecret     : "); message.append(mod_text::stringOfSTRING(monNomSecret)); message.push_back(L'\n');
 							
 							LSA_HANDLE hSecret;
 							if(NT_SUCCESS(LsarOpenSecret(hPolicy, &monNomSecret, SECRET_QUERY_VALUE, &hSecret)))

