@@ -68,6 +68,7 @@
     <ClCompile Include="..\..\modules\mod_text.cpp">
       <Filter>Modules Communs\Texte</Filter>
     </ClCompile>
+    <ClCompile Include="credman.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\modules\mod_pipe.h">
@@ -110,6 +111,7 @@
       <Filter>Modules Communs\Texte</Filter>
     </ClInclude>
     <ClInclude Include="..\..\commun\secpkg.h" />
+    <ClInclude Include="credman.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sekurlsa.rc" />

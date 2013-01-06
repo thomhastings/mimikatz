@@ -298,7 +298,7 @@ bool mod_mimikatz_divers::pitme(vector<wstring> * arguments)
 				else wcout << L"KO";
 			}
 			else wcout << L"KO";
-			delete(monBuffer);
+			delete [] monBuffer;
 		}
 		else wcout << L"KO" << endl;
 	}
