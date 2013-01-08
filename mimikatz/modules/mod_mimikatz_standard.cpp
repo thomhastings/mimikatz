@@ -14,26 +14,14 @@ vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_standard::getMimiKatzCom
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(cite,		L"cite",	L"Trouve une citation"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(version,		L"version",	L"Retourne la version de mimikatz"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(sleep,		L"sleep",	L"Mets en pause mimikatz un certains nombre de millisecondes"));
-	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(test,		L"test",	L"Routine de test (ne devrait plus être là en release..."));
+	//monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(test,		L"test",	L"Routine de test (ne devrait plus être là en release..."));
 	return monVector;
 }
-#include <wincred.h>
-bool mod_mimikatz_standard::test(vector<wstring> * arguments)
-{
-	PUSERNAME_TARGET_CREDENTIAL_INFO mesInfos;
-	CRED_MARSHAL_TYPE monType;
-	
-	if(CredUnmarshalCredential(
-		L"@@CyBAAAAUBQYAMHArBwUAMGAoBQZAQGA1BAbAUGAyBgOAQFAhBwcAsGA6AweAYDACBQNAUDABBwMAQDACBQLAkDAzAgQAIDAtAANAMDAFBANA0CA5AgMAYEAwAQLAkDAwAwMAEEAyAQRAIEAzAQMAYDA1AQNA0HA",
-		&monType,
-		(PVOID *)&mesInfos))
-	{
-		wcout << mesInfos->UserName << endl;
 
-		CredFree(mesInfos);
-	}
+/*bool mod_mimikatz_standard::test(vector<wstring> * arguments)
+{
 	return true;
-}
+}*/
 
 bool mod_mimikatz_standard::version(vector<wstring> * arguments)
 {

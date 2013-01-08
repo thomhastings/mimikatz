@@ -26,7 +26,7 @@ wstring mod_text::stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueu
 	wstring result(L"<NULL>");
 	if(monTab && maTaille > 0)
 	{
-		int flags = IS_TEXT_UNICODE_ODD_LENGTH | IS_TEXT_UNICODE_STATISTICS | IS_TEXT_UNICODE_NULL_BYTES;
+		int flags = IS_TEXT_UNICODE_ODD_LENGTH | IS_TEXT_UNICODE_STATISTICS /*| IS_TEXT_UNICODE_NULL_BYTES*/;
 		if(IsTextUnicode(monTab, maTaille, &flags))
 		{
 			result.assign(reinterpret_cast<const wchar_t *>(monTab), maTaille / sizeof(wchar_t));

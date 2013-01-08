@@ -23,7 +23,7 @@ __kextdll bool __cdecl getDescription(wstring * maDescription)
 		if(GetModuleHandle(L"tspkg")) GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getTsPkgLogonData, wstring(L"tspkg")));
 		if(GetModuleHandle(L"kerberos")) GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getKerberosLogonData, wstring(L"kerberos")));
 		if((mod_system::GLOB_Version.dwBuildNumber >= 8000) && GetModuleHandle(L"livessp")) GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getLiveSSPLogonData, wstring(L"livessp")));
-		if(mod_system::GLOB_Version.dwBuildNumber >= 6000) GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getCredmanData, wstring(L"credman")));
+		GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getCredmanData, wstring(L"credman")));
 	}
 	return resultat;
 }
