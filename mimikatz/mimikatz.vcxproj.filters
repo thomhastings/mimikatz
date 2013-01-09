@@ -214,6 +214,9 @@
     <ClInclude Include="..\modules\mod_minidump.h">
       <Filter>Modules Communs\System</Filter>
     </ClInclude>
+    <ClInclude Include="..\modules\mod_winsta_desktop.h">
+      <Filter>Modules Communs\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -348,6 +351,9 @@
       <Filter>Modules locaux pour mimikatz\Certificats &amp; Clés</Filter>
     </ClCompile>
     <ClCompile Include="..\modules\mod_minidump.cpp">
+      <Filter>Modules Communs\System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\modules\mod_winsta_desktop.cpp">
       <Filter>Modules Communs\System</Filter>
     </ClCompile>
   </ItemGroup>

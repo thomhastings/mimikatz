@@ -13,7 +13,7 @@ vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_terminalserver::getMimiK
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(processes,		L"processes"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(multirdp,		L"multirdp",		L"Patch le bureau à distance pour dépasser 2 connexions simultanées"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(viewshadow,		L"viewshadow",		L"Affiche l\'état de la prise de contrôle des sessions RDP"));
-	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(modifyshadow,	L"modifyshadow",	L"Modifie l\'état de la prise de contrôle des sessions RDP (DISABLE, INTERACT, INTERACT_NOASK, VIEW, VIEW_NOASK"));
+	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(modifyshadow,	L"modifyshadow",	L"Modifie l\'état de la prise de contrôle des sessions RDP (DISABLE, INTERACT, INTERACT_NOASK, VIEW, VIEW_NOASK)"));
 	return monVector;
 }
 

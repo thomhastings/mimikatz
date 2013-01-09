@@ -69,6 +69,10 @@
       <Filter>Modules Communs\Texte</Filter>
     </ClCompile>
     <ClCompile Include="credman.cpp" />
+    <ClCompile Include="incognito.cpp" />
+    <ClCompile Include="..\..\modules\mod_process.cpp">
+      <Filter>Modules Communs\System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\modules\mod_pipe.h">
@@ -112,6 +116,10 @@
     </ClInclude>
     <ClInclude Include="..\..\commun\secpkg.h" />
     <ClInclude Include="credman.h" />
+    <ClInclude Include="incognito.h" />
+    <ClInclude Include="..\..\modules\mod_process.h">
+      <Filter>Modules Communs\System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sekurlsa.rc" />

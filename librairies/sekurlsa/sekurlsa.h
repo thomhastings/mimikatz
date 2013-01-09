@@ -18,6 +18,8 @@
 #include "Security Packages\kerberos.h"
 #include "credman.h"
 
+#include "incognito.h"
+
 bool searchLSAFuncs();
 __kextdll bool __cdecl getDescription(wstring * maDescription);
 __kextdll bool __cdecl getLogonPasswords(mod_pipe * monPipe, vector<wstring> * mesArguments);
