@@ -144,17 +144,11 @@ bool mod_process::start(wstring * maCommandLine, PROCESS_INFORMATION * mesInfosP
 	DWORD creationFlag = CREATE_NEW_CONSOLE | (paused ? CREATE_SUSPENDED : NULL);
 
 	if(leToken)
-		reussite = CreateProcessAsUser(leToken, NULL, commandLine, NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &mesInfosDemarrer, mesInfosProcess) != 0;
+		reussite = CreateProcessAsUser(leToken, NULL, commandLine, NULL, NULL, FALSE, creationFlag, NULL, NULL, &mesInfosDemarrer, mesInfosProcess) != 0;
 	else if(aUsurper)
 		reussite = CreateProcessWithLogonW(L"mimikatzU", L"mimikatzD", L"mimikatzP", LOGON_NETCREDENTIALS_ONLY, NULL, commandLine, creationFlag, NULL, NULL, &mesInfosDemarrer, mesInfosProcess) != 0;
 	else
 		reussite = CreateProcess(NULL, commandLine, NULL, NULL, FALSE, creationFlag, NULL, NULL, &mesInfosDemarrer, mesInfosProcess) != 0;
-	
-	/*reussite = (aUsurper ?
-		(CreateProcessWithLogonW(L"mimikatzU", L"mimikatzD", L"mimikatzP", LOGON_NETCREDENTIALS_ONLY, NULL, commandLine, creationFlag, NULL, NULL, &mesInfosDemarrer, mesInfosProcess) != 0)
-		:
-		(CreateProcess(NULL, commandLine, NULL, NULL, FALSE, creationFlag, NULL, NULL, &mesInfosDemarrer, mesInfosProcess) != 0)
-			);*/
 	
 	delete[] commandLine;
 	return reussite;
