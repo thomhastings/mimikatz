@@ -80,4 +80,5 @@ public:
 	static bool getIAT(PBYTE ptrBaseAddr, vector<pair<string, vector<KIWI_IAT_MODULE>>> * monIAT, HANDLE handleProcess = INVALID_HANDLE_VALUE);
 
 	static wstring getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDLE process = INVALID_HANDLE_VALUE, PLSA_PROTECT_MEMORY unProtectFunction = NULL);
+	static bool getUnicodeStringOfProcess(UNICODE_STRING * ptrString, BYTE ** monBuffer, HANDLE process, PLSA_PROTECT_MEMORY unProtectFunction = NULL);
 };

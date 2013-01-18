@@ -56,7 +56,8 @@ typedef enum _SYSTEM_INFORMATION_CLASS {
 	KIWI_SystemPowerInformation,
 	SystemProcessorSpeedInformation,
 	SystemCurrentTimeZoneInformation,
-	SystemLookasideInformation
+	SystemLookasideInformation,
+	KIWI_SystemMmSystemRangeStart = 50
 } SYSTEM_INFORMATION_CLASS, *PSYSTEM_INFORMATION_CLASS;
 
 typedef enum _OBJECT_INFORMATION_CLASS {

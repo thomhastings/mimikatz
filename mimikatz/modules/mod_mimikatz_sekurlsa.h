@@ -57,7 +57,10 @@ private:
 	static bool population;
 	static vector<pair<PFN_ENUM_BY_LUID, wstring>> GLOB_ALL_Providers;
 	static bool getLogonPasswords(vector<wstring> * arguments);
+	static bool searchPasswords(vector<wstring> * arguments);
+
 	static PVOID getPtrFromAVLByLuidRec(PRTL_AVL_TABLE pTable, unsigned long LUIDoffset, PLUID luidToFind);
+	static bool ressembleString(PUNICODE_STRING maChaine, wstring * dstChaine = NULL, BYTE **buffer = NULL);
 public:
 	static HANDLE hLSASS;
 	static HMODULE hLsaSrv, hBCrypt;

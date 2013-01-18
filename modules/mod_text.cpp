@@ -24,9 +24,9 @@ wstring mod_text::stringOfHex(const BYTE monTab[], DWORD maTaille, DWORD longueu
 	return monStream.str();
 }
 
-wstring mod_text::stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur)
+wstring mod_text::stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur, bool ligne)
 {
-	wstring result(L"<NULL>");
+	wstring result;
 	if(monTab && maTaille > 0)
 	{
 		int flags = IS_TEXT_UNICODE_ODD_LENGTH | IS_TEXT_UNICODE_STATISTICS /*| IS_TEXT_UNICODE_NULL_BYTES*/;
@@ -36,13 +36,15 @@ wstring mod_text::stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueu
 		}
 		else
 		{
-			result.assign(L"\n");
+			if(ligne)
+				result.assign(L"\n");
 			result.append(stringOfHex(monTab, maTaille, longueur));
 		}
 	}
+	else result.assign(L"<NULL>");
+
 	return result;
 }
-
 
 void mod_text::wstringHexToByte(wstring &maChaine, BYTE monTab[])
 {

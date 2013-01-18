@@ -60,9 +60,8 @@ bool mod_mimikatz_sekurlsa_ssp::searchSSPEntryList()
 			}
 			FreeLibrary(monModule);
 		}
-		//SspCredentialList = reinterpret_cast<PKIWI_SSP_CREDENTIAL_LIST_ENTRY>(0x77C5F230);
 	}
-	return (SspCredentialList);
+	return (SspCredentialList != NULL);
 }
 
 bool WINAPI mod_mimikatz_sekurlsa_ssp::getSSPLogonData(__in PLUID logId, __in bool justSecurity)

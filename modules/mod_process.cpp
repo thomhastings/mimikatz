@@ -446,16 +446,28 @@ bool mod_process::getVeryBasicModulesListForProcess(vector<KIWI_VERY_BASIC_MODUL
 wstring mod_process::getUnicodeStringOfProcess(UNICODE_STRING * ptrString, HANDLE process, PLSA_PROTECT_MEMORY unProtectFunction)
 {
 	wstring maChaine;
+	BYTE * monBuffer = NULL;
+	if(getUnicodeStringOfProcess(ptrString, &monBuffer, process, unProtectFunction))
+	{
+		maChaine.assign(mod_text::stringOrHex(monBuffer, ptrString->Length));
+	}
+	if(monBuffer)
+		delete[] monBuffer;
+	return maChaine;
+}
+
+bool mod_process::getUnicodeStringOfProcess(UNICODE_STRING * ptrString, BYTE ** monBuffer, HANDLE process, PLSA_PROTECT_MEMORY unProtectFunction)
+{
+	bool resultat = false;
+
 	if(ptrString->Buffer && (ptrString->Length > 0))
 	{
-		BYTE * monBuffer = new BYTE[ptrString->MaximumLength];
-		if(mod_memory::readMemory(ptrString->Buffer, monBuffer, ptrString->MaximumLength, process))
+		*monBuffer = new BYTE[ptrString->MaximumLength];
+		if(resultat = mod_memory::readMemory(ptrString->Buffer, *monBuffer, ptrString->MaximumLength, process))
 		{
 			if(unProtectFunction)
-				unProtectFunction(monBuffer, ptrString->MaximumLength);
-			maChaine.assign(mod_text::stringOrHex(reinterpret_cast<PBYTE>(monBuffer), ptrString->Length));
+				unProtectFunction(*monBuffer, ptrString->MaximumLength);
 		}
-		delete[] monBuffer;
 	}
-	return maChaine;
+	return resultat;
 }

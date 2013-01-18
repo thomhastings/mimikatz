@@ -142,7 +142,7 @@ bool mod_system::getSystemHandles(vector<SYSTEM_HANDLE> * mesHandles, DWORD * pi
 			monBuffer = new BYTE[size];
 		}
 		
-		if(reussite = (status == STATUS_SUCCESS))
+		if(reussite = NT_SUCCESS(status))
 		{
 			PSYSTEM_HANDLE_INFORMATION mesInfos = reinterpret_cast<PSYSTEM_HANDLE_INFORMATION>(monBuffer);
 			for(DWORD i = 0; i < mesInfos->HandleCount; i++)

@@ -17,7 +17,7 @@ public:
 	static PRTL_INIT_UNICODESTRING RtlInitUnicodeString;
 
 	static wstring stringOfHex(const BYTE monTab[], DWORD maTaille, DWORD longueur = 0);
-	static wstring stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur = 32);
+	static wstring stringOrHex(const BYTE monTab[], DWORD maTaille, DWORD longueur = 32, bool ligne = true);
 	static void wstringHexToByte(wstring &maChaine, BYTE monTab[]);
 	
 	static wstring stringOfSTRING(UNICODE_STRING maString);
