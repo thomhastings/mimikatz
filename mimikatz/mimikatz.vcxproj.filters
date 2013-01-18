@@ -76,6 +76,9 @@
     <Filter Include="Modules locaux pour mimikatz\SekurLSA\Security Packages">
       <UniqueIdentifier>{43b545d3-ad41-4c42-970d-7850d77b5432}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules locaux pour mimikatz\SekurLSA\LSA Keys">
+      <UniqueIdentifier>{3a9d8afc-3734-4b86-ab2a-a300a20f956a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mimikatz.h" />
@@ -220,6 +223,12 @@
     <ClInclude Include="modules\Security Packages\ssp.h">
       <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
     </ClInclude>
+    <ClInclude Include="modules\LSA Keys\keys_nt5.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\LSA Keys</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\LSA Keys\keys_nt6.h">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\LSA Keys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
@@ -361,6 +370,12 @@
     </ClCompile>
     <ClCompile Include="modules\Security Packages\ssp.cpp">
       <Filter>Modules locaux pour mimikatz\SekurLSA\Security Packages</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\LSA Keys\keys_nt5.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\LSA Keys</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\LSA Keys\keys_nt6.cpp">
+      <Filter>Modules locaux pour mimikatz\SekurLSA\LSA Keys</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

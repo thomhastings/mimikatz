@@ -136,6 +136,8 @@
     <ClInclude Include="..\modules\mod_windows.h" />
     <ClInclude Include="..\modules\mod_winsta_desktop.h" />
     <ClInclude Include="mimikatz.h" />
+    <ClInclude Include="modules\LSA Keys\keys_nt5.h" />
+    <ClInclude Include="modules\LSA Keys\keys_nt6.h" />
     <ClInclude Include="modules\mod_mimikatz_crypto.h" />
     <ClInclude Include="modules\mod_mimikatz_divers.h" />
     <ClInclude Include="modules\mod_mimikatz_efs.h" />
@@ -186,6 +188,8 @@
     <ClCompile Include="..\modules\mod_winsta_desktop.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mimikatz.cpp" />
+    <ClCompile Include="modules\LSA Keys\keys_nt5.cpp" />
+    <ClCompile Include="modules\LSA Keys\keys_nt6.cpp" />
     <ClCompile Include="modules\mod_mimikatz_crypto.cpp" />
     <ClCompile Include="modules\mod_mimikatz_divers.cpp" />
     <ClCompile Include="modules\mod_mimikatz_efs.cpp" />

