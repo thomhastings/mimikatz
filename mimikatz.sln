@@ -15,7 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kappfree", "kappfree\kappfr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7999D050-6332-45F7-A343-C343902B1453}"
 	ProjectSection(SolutionItems) = preProject
-		lisezmoi.src.txt = lisezmoi.src.txt
 		lisezmoi.txt = lisezmoi.txt
 	EndProjectSection
 EndProject

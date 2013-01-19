@@ -105,7 +105,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="kappfree.cpp" />
+    <ClCompile Include="kappfree.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="kappfree.h" />

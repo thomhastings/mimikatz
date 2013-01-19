@@ -5,7 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #pragma once
-#include "sekurlsa.h"
+#include "../sekurlsa.h"
 
 bool searchCredmanFuncs();
 __kextdll bool __cdecl getCredmanFunctions(mod_pipe * monPipe, vector<wstring> * mesArguments);

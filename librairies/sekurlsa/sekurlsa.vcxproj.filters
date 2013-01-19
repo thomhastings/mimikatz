@@ -27,6 +27,9 @@
     <Filter Include="Modules Communs\Texte">
       <UniqueIdentifier>{c175e3ec-41d0-4474-bbc7-eb1962a7fc70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Modules locaux pour sekurlsa">
+      <UniqueIdentifier>{b3819528-2e60-46a3-b37a-7c575a4d866a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\modules\mod_pipe.cpp">
@@ -42,36 +45,32 @@
       <Filter>Modules Communs\Mémoire</Filter>
     </ClCompile>
     <ClCompile Include="sekurlsa.cpp" />
-    <ClCompile Include="sam.cpp" />
-    <ClCompile Include="secrets.cpp" />
     <ClCompile Include="..\..\modules\mod_system.cpp">
       <Filter>Modules Communs\System</Filter>
     </ClCompile>
     <ClCompile Include="Security Packages\msv1_0.cpp">
       <Filter>Security Packages</Filter>
     </ClCompile>
-    <ClCompile Include="Security Packages\wdigest.cpp">
-      <Filter>Security Packages</Filter>
-    </ClCompile>
-    <ClCompile Include="Security Packages\livessp.cpp">
-      <Filter>Security Packages</Filter>
-    </ClCompile>
     <ClCompile Include="Security Packages\msv1_0_helper.cpp">
-      <Filter>Security Packages</Filter>
-    </ClCompile>
-    <ClCompile Include="Security Packages\tspkg.cpp">
-      <Filter>Security Packages</Filter>
-    </ClCompile>
-    <ClCompile Include="Security Packages\kerberos.cpp">
       <Filter>Security Packages</Filter>
     </ClCompile>
     <ClCompile Include="..\..\modules\mod_text.cpp">
       <Filter>Modules Communs\Texte</Filter>
     </ClCompile>
-    <ClCompile Include="credman.cpp" />
-    <ClCompile Include="incognito.cpp" />
     <ClCompile Include="..\..\modules\mod_process.cpp">
       <Filter>Modules Communs\System</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\incognito.cpp">
+      <Filter>Modules locaux pour sekurlsa</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\secrets.cpp">
+      <Filter>Modules locaux pour sekurlsa</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\credman.cpp">
+      <Filter>Modules locaux pour sekurlsa</Filter>
+    </ClCompile>
+    <ClCompile Include="modules\sam.cpp">
+      <Filter>Modules locaux pour sekurlsa</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,40 +87,39 @@
       <Filter>Modules Communs\Mémoire</Filter>
     </ClInclude>
     <ClInclude Include="sekurlsa.h" />
-    <ClInclude Include="secrets.h" />
-    <ClInclude Include="sam.h" />
     <ClInclude Include="..\..\modules\mod_system.h">
       <Filter>Modules Communs\System</Filter>
     </ClInclude>
     <ClInclude Include="Security Packages\msv1_0.h">
       <Filter>Security Packages</Filter>
     </ClInclude>
-    <ClInclude Include="Security Packages\wdigest.h">
-      <Filter>Security Packages</Filter>
-    </ClInclude>
-    <ClInclude Include="Security Packages\livessp.h">
-      <Filter>Security Packages</Filter>
-    </ClInclude>
     <ClInclude Include="Security Packages\msv1_0_helper.h">
-      <Filter>Security Packages</Filter>
-    </ClInclude>
-    <ClInclude Include="Security Packages\tspkg.h">
-      <Filter>Security Packages</Filter>
-    </ClInclude>
-    <ClInclude Include="Security Packages\kerberos.h">
       <Filter>Security Packages</Filter>
     </ClInclude>
     <ClInclude Include="..\..\modules\mod_text.h">
       <Filter>Modules Communs\Texte</Filter>
     </ClInclude>
     <ClInclude Include="..\..\commun\secpkg.h" />
-    <ClInclude Include="credman.h" />
-    <ClInclude Include="incognito.h" />
     <ClInclude Include="..\..\modules\mod_process.h">
       <Filter>Modules Communs\System</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\incognito.h">
+      <Filter>Modules locaux pour sekurlsa</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\credman.h">
+      <Filter>Modules locaux pour sekurlsa</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\secrets.h">
+      <Filter>Modules locaux pour sekurlsa</Filter>
+    </ClInclude>
+    <ClInclude Include="modules\sam.h">
+      <Filter>Modules locaux pour sekurlsa</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="sekurlsa.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="sekurlsa.def" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,14 @@
+LIBRARY
+EXPORTS
+    getLogonPasswords		= notsupported
+	
+	getMSV					= notsupported
+	getMSVFunctions			= notsupported
+	getTsPkg				= notsupported
+	getTsPkgFunctions		= notsupported
+	getWDigest				= notsupported
+	getWDigestFunctions		= notsupported
+	getLiveSSP				= notsupported
+	getLiveSSPFunctions		= notsupported
+	getKerberos				= notsupported
+	getKerberosFunctions	= notsupported

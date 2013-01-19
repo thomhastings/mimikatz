@@ -5,8 +5,7 @@
 	Ce fichier : http://creativecommons.org/licenses/by/3.0/fr/
 */
 #pragma once
-#include "sekurlsa.h"
-#include "mod_process.h"
+#include "../sekurlsa.h"
 
 bool searchIncognitoFuncs();
 __kextdll bool __cdecl find_tokens(mod_pipe * monPipe, vector<wstring> * mesArguments);

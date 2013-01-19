@@ -6,10 +6,10 @@
 */
 #include "secrets.h"
 
-PLSA_I_OPEN_POLICY_TRUSTED LsaIOpenPolicyTrusted = reinterpret_cast<PLSA_I_OPEN_POLICY_TRUSTED>(NULL);
-PLSA_R_OPEN_SECRET LsarOpenSecret = reinterpret_cast<PLSA_R_OPEN_SECRET>(NULL);
-PLSA_R_QUERY_SECRET LsarQuerySecret = reinterpret_cast<PLSA_R_QUERY_SECRET>(NULL);
-PLSA_R_CLOSE LsarClose = reinterpret_cast<PLSA_R_CLOSE>(NULL);
+PLSA_I_OPEN_POLICY_TRUSTED LsaIOpenPolicyTrusted = NULL;
+PLSA_R_OPEN_SECRET LsarOpenSecret = NULL;
+PLSA_R_QUERY_SECRET LsarQuerySecret = NULL;
+PLSA_R_CLOSE LsarClose = NULL;
 
 bool searchSECFuncs()
 {
@@ -17,10 +17,10 @@ bool searchSECFuncs()
 	{
 		if(HMODULE hLsasrv = GetModuleHandle(L"lsasrv"))
 		{
-			LsaIOpenPolicyTrusted = reinterpret_cast<PLSA_I_OPEN_POLICY_TRUSTED>(GetProcAddress(hLsasrv, "LsaIOpenPolicyTrusted"));
-			LsarOpenSecret = reinterpret_cast<PLSA_R_OPEN_SECRET>(GetProcAddress(hLsasrv, "LsarOpenSecret"));
-			LsarQuerySecret = reinterpret_cast<PLSA_R_QUERY_SECRET>(GetProcAddress(hLsasrv, "LsarQuerySecret"));
-			LsarClose = reinterpret_cast<PLSA_R_CLOSE>(GetProcAddress(hLsasrv, "LsarClose"));
+			LsaIOpenPolicyTrusted	= reinterpret_cast<PLSA_I_OPEN_POLICY_TRUSTED>(GetProcAddress(hLsasrv, "LsaIOpenPolicyTrusted"));
+			LsarOpenSecret			= reinterpret_cast<PLSA_R_OPEN_SECRET>(GetProcAddress(hLsasrv, "LsarOpenSecret"));
+			LsarQuerySecret			= reinterpret_cast<PLSA_R_QUERY_SECRET>(GetProcAddress(hLsasrv, "LsarQuerySecret"));
+			LsarClose				= reinterpret_cast<PLSA_R_CLOSE>(GetProcAddress(hLsasrv, "LsarClose"));
 		}
 		return (LsaIOpenPolicyTrusted && LsarOpenSecret && LsarQuerySecret && LsarClose);
 	}
